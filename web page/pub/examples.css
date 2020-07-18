@@ -1,0 +1,187 @@
+html {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+#navbar {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: white;
+    border-bottom: 1px solid lightgray;
+    font-weight: bold;
+    padding: 10px 20px;
+}
+
+#navbar code {
+    font-size: x-large;
+}
+
+#navbar a {
+    border: 0px;
+    border-radius: 20px;
+    text-decoration: none;
+    color: black;
+    padding: 10px 20px;
+}
+
+#navbar #selected {
+    color: white;
+    /* Gradient https://cssgradient.io/*/
+    background-image: linear-gradient( 135.9deg,  rgba(109,25,252,1) 16.4%, rgba(125,31,165,1) 56.1%);
+}
+
+#navbar a:hover {
+    background-color: rgb(248, 238, 255);
+}
+
+#navbar a img {
+    margin: -2px 4px;
+    width: 1rem;
+}
+
+#content {
+    margin-top: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+.shadow-card {
+    position: relative;
+    padding: 20px;
+    background-color: white;
+    border: 0px;
+    border-radius: 20px;
+    box-shadow: 0px 0px 10px #AAAAAA;
+}
+
+#needle {
+    position: absolute;
+    z-index: 1;
+    right: 50px;
+    top: 20px;
+    background-color: darkgray;
+    height: 120px;
+    width: 6px;
+    border: 0px;
+    border-radius: 3px;
+    -ms-transform: rotate(20deg); /* IE 9 */
+    transform: rotate(20deg);
+}
+
+#control-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+#control-buttons button {
+    background-color: Transparent;
+    border: none;
+    cursor:pointer;
+    outline:none;
+}
+
+#control-buttons img {
+    width: 30px;
+}
+
+.my-songs {
+    max-width: 60%;
+}
+
+.card {
+    background-color: #EEEEEE;
+    padding: 10px;
+    margin: 10px;
+    border-radius: 20px;
+    display: flex;
+    flex-grow: 1;
+}
+
+.grid {
+    display: flex;
+    flex-wrap: wrap;
+    max-height: 70vh;
+    overflow: auto;
+}
+
+.info {
+    float: right;
+    margin: 5px;
+    width: 200px;
+}
+
+
+
+/* Record */
+
+.empty-record, .record {
+    position: relative;
+    margin: 10px;
+    height: 140px;
+    width: 140px;
+    border-radius: 50%;
+}
+
+.empty-record {
+    border: 0px solid black;
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.record {
+    border: 5px solid black;
+    /* Gradient https://cssgradient.io/*/
+    background: linear-gradient(45deg, rgba(0,0,0) 35%, rgba(78,78,78) 50%, rgba(0,0,0) 65%);
+}
+
+.ring {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+}
+
+.dot {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 4px;
+    height: 4px;
+    background-color: black;
+    border-radius: 50%;
+}
+
+/* Colors */
+
+.color-sand {
+    background-color: bisque;
+}
+
+.color-green {
+    background-color: lightgreen;
+}
+
+.color-blue {
+    background-color: deepskyblue;
+}
+
+.color-red {
+    background-color: red;
+}
+
+.color-purple {
+    background-color: darkviolet;
+}
+
+.color-yellow {
+    background-color: gold;
+}
