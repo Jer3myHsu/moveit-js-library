@@ -2,33 +2,35 @@
 
 const log = console.log;
 let movingElement = null;
-let toMove = null;
-const groups = [];
+const moveItGroup = {
+    id: undefined,
+    itemClassName: undefined,
+    dragProperty: [],
+};
 
-function createGroup(groupId, itemClassName) {
-    function Group(groupId, itemClassName) {
-        this.id = groupId;
-        this.itemClassName = itemClassName;
-        this.HTML = () => document.querySelector("#" + this.id);
-        this.items = () => getItemsByClassName(this.HTML(), this.itemClassName);
+function createGroup(groupId, itemClassName, itemHeight, itemWidth) {
+    function initializeId(items, groupId) {
+        for (let i = 0; i < items.length; i++) {
+            items[i].setAttribute("moveIt-id", i);
+        }
     }
-    groups.push(new Group(groupId, itemClassName));
+    function initialDragProperty(items) {
+        const dragProperty = [];
+        for (let i = 0; i < items.length; i++) {
+            dragProperty.push({
+                id: i,
+                canDragWith: undefined,
+            });
+        }
+        return dragProperty;
+    }
+    moveItGroup.id = groupId;
+    moveItGroup.itemClassName = itemClassName;
+    moveItGroup.dragProperty = initialDragProperty(getItemsInGroup());
+    initializeId(getItemsInGroup(), groupId);
 }
 
-function getGroupByItemClass(itemClassName) {
-    return groups.filter(group => group.itemClassName === itemClassName)[0];
-}
-
-function getGroupsByItem(item) {
-    const classes = item.className.split(" ");
-    return groups.filter(group => classes.includes(group.itemClassName));
-}
-
-function getGroupById(groupId) {
-    return groups.filter(group => group.id === groupId)[0];
-}
-
-function getItemsByClassName(groupHTML, className) {
+function getItemsInGroup() {
     function getItems(element, itemClass, result) {
         if (!element) {
             return;
@@ -39,55 +41,72 @@ function getItemsByClassName(groupHTML, className) {
             getItems(element.firstElementChild, itemClass, result);
         }
         getItems(element.nextElementSibling, itemClass, result);
+        return result;
     }
-    const items = [];
-    getItems(groupHTML, className, items);
-    return items;
+    return getItems(document.querySelector("#" + moveItGroup.id), moveItGroup.itemClassName, []);
 }
 
-function swap(itemOne, itemTwo) {
-    const temp = itemOne.outerHTML;
-    itemOne.outerHTML = itemTwo.outerHTML;
-    itemTwo.outerHTML = temp;
+function isInGroup(item) {
+    const classes = item.className.split(" ");
+    return classes.includes(moveItGroup.itemClassName);
+}
+
+function getItemById(itemId) {
+    try {
+        return getItemsInGroup().filter(item => item.getAttribute("moveIt-id") === itemId)[0];
+    } catch(e) {
+        return undefined;
+    }
+}
+
+function getIdByItem(item) {
+    try {
+        return item.getAttribute("moveIt-id");
+    } catch(e) {
+        return undefined;
+    }
+}
+
+function swap(itemOne, itemTwo) {    
+    if (isInGroup(itemOne) && isInGroup(itemTwo)) {
+        const temp = itemOne.outerHTML;
+        itemOne.outerHTML = itemTwo.outerHTML;
+        itemTwo.outerHTML = temp;
+    }
 }
 
 function holdItem(item) {
-        movingElement = document.createElement(item.tagName);
-        toMove = item;
-        movingElement.innerHTML = item.outerHTML;
-        movingElement.style.position = "absolute";
-        
-        movingElement.style["z-index"] = Number.MAX_SAFE_INTEGER;// other notation has issue with hyphen
-        movingElement.style["pointer-events"] = "none";
-        movingElement.style.visibility = "hidden";
-        document.body.style.cursor = "grabbing";
-        document.body.style.overflow = "hidden";
-        document.body.style["user-select"] = "none";
-        document.body.appendChild(movingElement);
+    document.body.style.cursor = "grabbing";
+    document.body.style.overflow = "hidden";
+    document.body.style["user-select"] = "none";
+    movingElement = document.createElement("div");
+    movingElement.innerHTML = item.outerHTML;
+    movingElement.setAttribute("moveIt-id", getIdByItem(item));
+    movingElement.style.position = "absolute";
+    movingElement.style["z-index"] = Number.MAX_SAFE_INTEGER;// other notation has issue with hyphen
+    movingElement.style["pointer-events"] = "none";
+    movingElement.style.visibility = "hidden";
+    document.body.appendChild(movingElement);
 }
 
 function releaseItem() {
     if (movingElement) {
         movingElement.style.visibility = "hidden";
         document.body.removeChild(movingElement);
-        const temp = movingElement.firstElementChild;
+        const id = getIdByItem(movingElement);
         movingElement = null;
-        document.body.style = null;
         document.body.style.overflow = "auto";
         document.body.style.cursor = "auto";
         document.body.style["user-select"] = "auto";
-        return temp;
+        return id;
     }
 }
 
 function getItemMouseOver(e) {
     for (let i = 0; i < e.path.length; i++) {
-        const classNames = groups.map(group => group.itemClassName);
-        for (let j = 0; j < classNames.length; j++) {
-            const classes = e.path[i].className;
-            if (classes && classes.split(" ").includes(classNames[j])) {
-                return e.path[i];
-            }
+        const classes = e.path[i].className;
+        if (classes && classes.split(" ").includes(moveItGroup.itemClassName)) {
+            return e.path[i];
         }
     }
 }
@@ -112,9 +131,10 @@ window.addEventListener("mousedown", function(e) {
 });
 
 window.addEventListener("mouseup", function(e) {
-    releaseItem();
+    const releasedItem = getItemById(releaseItem());
     const item = getItemMouseOver(e);
-    if (item && item !== toMove) {
-        swap(item, toMove);
+    if (!releasedItem || !item || item === releasedItem) {
+    } else {
+        swap(item, releasedItem);
     }
 });

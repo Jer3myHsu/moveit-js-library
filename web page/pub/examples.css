@@ -1,6 +1,25 @@
 html {
     font-family: Arial, Helvetica, sans-serif;
 }
+::-webkit-scrollbar {
+    width: 20px;
+}
+
+::-webkit-scrollbar-track {
+    border: 0px solid white;
+    border-radius: 10px;
+    margin: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    border: 6px solid white;
+    border-radius: 10px;
+    background: lightgray; 
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #AAAAAA;
+}
 
 #navbar {
     position: fixed;
@@ -115,8 +134,6 @@ html {
     margin: 5px;
     width: 200px;
 }
-
-
 
 /* Record */
 
