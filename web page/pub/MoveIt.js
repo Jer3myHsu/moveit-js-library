@@ -1,7 +1,7 @@
 "use strict";
 
 const log = console.log;//REMOVE ME
-let movingElement = undefined;
+let heldElement = undefined;
 const moveItGroup = {
     id: undefined,
     itemClassName: undefined,
@@ -162,28 +162,31 @@ function swap(itemOne, itemTwo) {
 }
 
 function holdItem(item) {
+    heldElement = document.createElement("div");
+    heldElement.innerHTML = item.outerHTML;
+    heldElement.setAttribute("body-cursor", document.body.style.cursor);
+    heldElement.setAttribute("body-overflow", document.body.style.overflow);
+    heldElement.setAttribute("body-user-select", document.body.style["user-select"]);
+    heldElement.setAttribute("moveIt-id", getIdByItem(item));
+    heldElement.style.position = "absolute";
+    heldElement.style["z-index"] = Number.MAX_SAFE_INTEGER;// other notation has issue with hyphen
+    heldElement.style["pointer-events"] = "none";
+    heldElement.style.visibility = "hidden";
     document.body.style.cursor = "grabbing";
     document.body.style.overflow = "hidden";
     document.body.style["user-select"] = "none";
-    movingElement = document.createElement("div");
-    movingElement.innerHTML = item.outerHTML;
-    movingElement.setAttribute("moveIt-id", getIdByItem(item));
-    movingElement.style.position = "absolute";
-    movingElement.style["z-index"] = Number.MAX_SAFE_INTEGER;// other notation has issue with hyphen
-    movingElement.style["pointer-events"] = "none";
-    movingElement.style.visibility = "hidden";
-    document.body.appendChild(movingElement);
+    document.body.appendChild(heldElement);
 }
 
 function releaseItem() {
-    if (movingElement) {
-        movingElement.style.visibility = "hidden";
-        document.body.removeChild(movingElement);
-        const id = getIdByItem(movingElement);
-        movingElement = null;
-        document.body.style.overflow = "auto";
-        document.body.style.cursor = "auto";
-        document.body.style["user-select"] = "auto";
+    if (heldElement) {
+        heldElement.style.visibility = "hidden";
+        document.body.removeChild(heldElement);
+        document.body.style.overflow = heldElement.getAttribute("body-cursor");
+        document.body.style.cursor = heldElement.getAttribute("body-overflow");
+        document.body.style["user-select"] = heldElement.getAttribute("body-user-select");
+        const id = getIdByItem(heldElement);
+        heldElement = null;
         return id;
     }
 }
@@ -200,12 +203,12 @@ function getItemMouseOver(e) {
 window.addEventListener("mousemove", function(e){
     // Help from
     //https://stackoverflow.com/questions/45706937/how-do-i-have-an-element-follow-the-mouse-without-jquery
-    if (movingElement) {
-        movingElement.style.visibility = "visible";
-        const left = e.pageX - movingElement.clientWidth/2;
-        const top = e.pageY - movingElement.clientHeight/2;
-        movingElement.style.left = left + "px";
-        movingElement.style.top = top + "px";
+    if (heldElement) {
+        heldElement.style.visibility = "visible";
+        const left = e.pageX - heldElement.clientWidth/2;
+        const top = e.pageY - heldElement.clientHeight/2;
+        heldElement.style.left = left + "px";
+        heldElement.style.top = top + "px";
     }
 });
 
