@@ -1,14 +1,14 @@
 "use strict";
 
-const log = console.log;
-let movingElement = null;
+const log = console.log;//REMOVE ME
+let movingElement = undefined;
 const moveItGroup = {
     id: undefined,
     itemClassName: undefined,
     dragProperty: [],
 };
 
-function createGroup(groupId, itemClassName, itemHeight, itemWidth) {
+function initializeGroup(groupId, itemClassName, itemHeight, itemWidth) {
     function initializeId(items, groupId) {
         for (let i = 0; i < items.length; i++) {
             items[i].setAttribute("moveIt-id", i);
@@ -16,12 +16,7 @@ function createGroup(groupId, itemClassName, itemHeight, itemWidth) {
     }
     function initialDragProperty(items) {
         const dragProperty = [];
-        for (let i = 0; i < items.length; i++) {
-            dragProperty.push({
-                id: i,
-                canDragWith: undefined,
-            });
-        }
+        items.map(item => dragProperty.push(undefined));
         return dragProperty;
     }
     moveItGroup.id = groupId;
@@ -51,9 +46,100 @@ function isInGroup(item) {
     return classes.includes(moveItGroup.itemClassName);
 }
 
+function canDragWith(srcId, destId) {
+    return moveItGroup.dragProperty.length > srcId && moveItGroup.dragProperty[srcId] ?
+        moveItGroup.dragProperty[srcId].includes(destId) : true;
+}
+function getDragWith(itemId) {
+    const newProps = [];
+    if (moveItGroup.dragProperty[itemId]) {
+        moveItGroup.dragProperty[itemId].map(id => {
+            if (id < moveItGroup.dragProperty.length && id >= 0 && id !== itemId) {
+                newProps.push(id);
+            }
+        });
+        newProps.sort((a, b) => a - b);
+        moveItGroup.dragProperty[itemId] = newProps;
+    } else {
+        moveItGroup.dragProperty.map((prop, i) => i !== itemId && newProps.push(i));
+    }
+    return newProps;
+}
+
+function addDraggableWith(srcIdArr, destIdArr) {
+    const allIdArr = [];
+    if (srcIdArr === undefined) {
+        moveItGroup.dragProperty.map((prop, i) => allIdArr.push(i));
+    }
+    (srcIdArr || allIdArr).map(srcId => {
+        if (moveItGroup.dragProperty.length <= srcId) {
+            return;
+        }
+        if(destIdArr === undefined) {
+            moveItGroup.dragProperty[srcId] = undefined;
+        } else if (moveItGroup.dragProperty[srcId]) {
+            destIdArr.map(destId => {
+                if (!moveItGroup.dragProperty[srcId].includes(destId) && destId < moveItGroup.dragProperty.length && destId !== srcId) {
+                    moveItGroup.dragProperty[srcId].push(destId);
+                }
+            });
+            moveItGroup.dragProperty[srcId].sort((a, b) => a - b);
+        }
+    });
+}
+
+function setDraggableWith(srcIdArr, destIdArr) {
+    const allIdArr = [];
+    if (srcIdArr === undefined) {
+        moveItGroup.dragProperty.map((prop, i) => allIdArr.push(i));
+    }
+    (srcIdArr || allIdArr).map(srcId => {
+        if (moveItGroup.dragProperty.length <= srcId) {
+            return;
+        }
+        if(destIdArr === undefined) {
+            moveItGroup.dragProperty[srcId] = undefined;
+        } else {
+            moveItGroup.dragProperty[srcId] = destIdArr;
+            moveItGroup.dragProperty[srcId].sort((a, b) => a - b);
+        }
+    });
+}
+
+function removeDraggableWith(srcIdArr, destIdArr) {
+    const allIdArr = [];
+    if (srcIdArr === undefined) {
+        moveItGroup.dragProperty.map((prop, i) => allIdArr.push(i));
+    }
+    (srcIdArr || allIdArr).map(srcId => {
+        if (moveItGroup.dragProperty.length <= srcId) {
+            return;
+        }
+        if(destIdArr === undefined) {
+            moveItGroup.dragProperty[srcId] = [];
+            return;
+        } else if (!moveItGroup.dragProperty[srcId]) {
+            const allIdArr = [];
+            moveItGroup.dragProperty.map((prop, i) => allIdArr.push(i));
+            moveItGroup.dragProperty[srcId] = allIdArr;
+        }
+        destIdArr.map(destId => {
+            const index = moveItGroup.dragProperty[srcId].indexOf(destId);
+            if (index >= 0) {
+                moveItGroup.dragProperty[srcId].splice(index, 1);
+            }
+        });
+        if (allIdArr === moveItGroup.dragProperty[srcId]) {
+            moveItGroup.dragProperty[srcId] = undefined;
+        } else {
+            moveItGroup.dragProperty[srcId].sort((a, b) => a - b);
+        }
+    });
+}
+
 function getItemById(itemId) {
     try {
-        return getItemsInGroup().filter(item => item.getAttribute("moveIt-id") === itemId)[0];
+        return getItemsInGroup().filter(item => parseInt(item.getAttribute("moveIt-id")) === itemId)[0];
     } catch(e) {
         return undefined;
     }
@@ -61,13 +147,13 @@ function getItemById(itemId) {
 
 function getIdByItem(item) {
     try {
-        return item.getAttribute("moveIt-id");
+        return parseInt(item.getAttribute("moveIt-id"));
     } catch(e) {
         return undefined;
     }
 }
 
-function swap(itemOne, itemTwo) {    
+function swap(itemOne, itemTwo) {
     if (isInGroup(itemOne) && isInGroup(itemTwo)) {
         const temp = itemOne.outerHTML;
         itemOne.outerHTML = itemTwo.outerHTML;
@@ -125,16 +211,16 @@ window.addEventListener("mousemove", function(e){
 
 window.addEventListener("mousedown", function(e) {
     const item = getItemMouseOver(e);
-    if (item) {
+    if (item && getDragWith(getIdByItem(item)).length > 0) {
         holdItem(item);
     }
 });
 
 window.addEventListener("mouseup", function(e) {
-    const releasedItem = getItemById(releaseItem());
-    const item = getItemMouseOver(e);
-    if (!releasedItem || !item || item === releasedItem) {
-    } else {
-        swap(item, releasedItem);
+    const releasedItemId = releaseItem();
+    const releasedItem = getItemById(releasedItemId);
+    const itemOver = getItemMouseOver(e);
+    if (releasedItem && itemOver && itemOver !== releasedItem && canDragWith(releasedItemId, getIdByItem(itemOver))) {
+        swap(itemOver, releasedItem);
     }
 });

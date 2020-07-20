@@ -1,1 +1,3 @@
-const groupmy = createGroup("content", "group-item");
+initializeGroup("content", "group-item");
+
+setDraggableWith(undefined, [0])
