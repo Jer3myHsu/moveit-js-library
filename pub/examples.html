@@ -3,11 +3,13 @@
   <head>
     <meta charset="utf-8">
     <title>Music Player</title>
+    <link rel="icon" href="res/app-icon.svg"/>
     <link rel="stylesheet" type="text/css" href="examples.css">
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Quicksand" />
   </head>
   <body>
     <div id="navbar">
-      <code id="logo">MyMedia</code>
+      <span id="logo">MyMedia</span>
       <div id="menu">
         <a href="">Home</a>
         <a href="">Images</a>
@@ -20,11 +22,11 @@
     </div>
     <div id="content">
       <div class="shadow-card">
-        <div id="needle"></div>
-        <div class="group-item empty-record">
+        <div id="needle-idle" class="needle"></div>
+        <div class="group-item empty-record" onclick="onEmptyRecordClick(this)">
           <div class="dot"></div>
         </div>
-        <span>Song</span>
+        <span>No Song</span>
         <div id="control-buttons">
           <button>
             <img src="res/previous.svg"/>
@@ -41,7 +43,7 @@
         <h1>My Songs</h1>
         <div class="shadow-card grid">
           <div class="card">
-            <div class="group-item record" onclick="ok()">
+            <div class="group-item record" onclick="onRecordClick(this)">
               <div class="ring color-sand"></div>
               <div class="dot"></div>
             </div>
@@ -52,7 +54,7 @@
             </div>
           </div>
           <div class="card">
-            <div class="group-item record">
+            <div class="group-item record" onclick="onRecordClick(this)">
               <div class="ring color-green"></div>
               <div class="dot"></div>
             </div>
@@ -63,7 +65,7 @@
             </div>
           </div>
           <div class="card">
-            <div class="group-item record">
+            <div class="group-item record" onclick="onRecordClick(this)">
               <div class="ring color-blue"></div>
               <div class="dot"></div>
             </div>
@@ -74,7 +76,7 @@
             </div>
           </div>
           <div class="card">
-            <div class="group-item record">
+            <div class="group-item record" onclick="onRecordClick(this)">
               <div class="ring color-red"></div>
               <div class="dot"></div>
             </div>
@@ -85,7 +87,7 @@
             </div>
           </div>
           <div class="card">
-            <div class="group-item record">
+            <div class="group-item record" onclick="onRecordClick(this)">
               <div class="ring color-purple"></div>
               <div class="dot"></div>
             </div>
@@ -96,7 +98,7 @@
             </div>
           </div>
           <div class="card">
-            <div class="group-item record">
+            <div class="group-item record" onclick="onRecordClick(this)">
               <div class="ring color-yellow"></div>
               <div class="dot"></div>
             </div>

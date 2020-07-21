@@ -5,27 +5,11 @@ let heldElement = undefined;
 const moveItGroup = {
     id: undefined,
     itemClassName: undefined,
+    getItems: undefined,
     dragProperty: []
 };
 
 function initializeGroup(groupId, itemClassName) {
-    function initializeId(items, groupId) {
-        for (let i = 0; i < items.length; i++) {
-            items[i].setAttribute("moveIt-id", i);
-        }
-    }
-    function initialDragProperty(items) {
-        const dragProperty = [];
-        items.map(item => dragProperty.push(undefined));
-        return dragProperty;
-    }
-    moveItGroup.id = groupId;
-    moveItGroup.itemClassName = itemClassName;
-    moveItGroup.dragProperty = initialDragProperty(getItemsInGroup());
-    initializeId(getItemsInGroup(), groupId);
-}
-
-function getItemsInGroup() {
     function getItems(element, itemClass, result) {
         if (!element) {
             return;
@@ -38,7 +22,21 @@ function getItemsInGroup() {
         getItems(element.nextElementSibling, itemClass, result);
         return result;
     }
-    return getItems(document.querySelector("#" + moveItGroup.id), moveItGroup.itemClassName, []);
+    function initializeId(items, groupId) {
+        for (let i = 0; i < items.length; i++) {
+            items[i].setAttribute("moveIt-id", i);
+        }
+    }
+    function initialDragProperty(items) {
+        const dragProperty = [];
+        items.map(item => dragProperty.push(undefined));
+        return dragProperty;
+    }
+    moveItGroup.id = groupId;
+    moveItGroup.itemClassName = itemClassName;
+    moveItGroup.getItems = () => getItems(document.querySelector("#" + moveItGroup.id), moveItGroup.itemClassName, []);
+    moveItGroup.dragProperty = initialDragProperty(moveItGroup.getItems());
+    initializeId(moveItGroup.getItems(), groupId);
 }
 
 function isInGroup(item) {
@@ -50,6 +48,7 @@ function canDragWith(srcId, destId) {
     return moveItGroup.dragProperty.length > srcId && moveItGroup.dragProperty[srcId] ?
         moveItGroup.dragProperty[srcId].includes(destId) : true;
 }
+
 function getDragWith(itemId) {
     const newProps = [];
     if (moveItGroup.dragProperty[itemId]) {
@@ -139,7 +138,7 @@ function removeDraggableWith(srcIdArr, destIdArr) {
 
 function getItemById(itemId) {
     try {
-        return getItemsInGroup().filter(item => parseInt(item.getAttribute("moveIt-id")) === itemId)[0];
+        return moveItGroup.getItems().filter(item => parseInt(item.getAttribute("moveIt-id")) === itemId)[0];
     } catch(e) {
         return undefined;
     }
@@ -200,13 +199,11 @@ function getItemMouseOver(e) {
     }
 }
 
-window.addEventListener("mousemove", function(e){
-    // Help from
-    //https://stackoverflow.com/questions/45706937/how-do-i-have-an-element-follow-the-mouse-without-jquery
+window.addEventListener("mousemove", function(e) {
     if (heldElement) {
         heldElement.style.visibility = "visible";
-        const left = e.pageX - heldElement.clientWidth/2;
-        const top = e.pageY - heldElement.clientHeight/2;
+        const left = e.pageX - heldElement.clientWidth / 2;
+        const top = e.pageY - heldElement.clientHeight / 2;
         heldElement.style.left = left + "px";
         heldElement.style.top = top + "px";
     }

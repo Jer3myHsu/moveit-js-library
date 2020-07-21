@@ -1,5 +1,7 @@
 html {
     font-family: Arial, Helvetica, sans-serif;
+    -webkit-font-smoothing: subpixel-antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 ::-webkit-scrollbar {
@@ -36,8 +38,10 @@ html {
     padding: 10px 20px;
 }
 
-#navbar code {
+#navbar #logo {
+    font-family: Quicksand, Arial;
     font-size: x-large;
+    font-weight: bolder;
 }
 
 #navbar a {
@@ -79,17 +83,25 @@ html {
     box-shadow: 0px 0px 10px #AAAAAA;
 }
 
-#needle {
+.needle {
     position: absolute;
-    z-index: 1;
-    right: 50px;
-    top: 20px;
     background-color: darkgray;
+    z-index: 1;
     height: 120px;
     width: 6px;
     border: 0px;
     border-radius: 3px;
+}
+
+#needle-playing {
+    right: 40px;
+    top: 20px;
     transform: rotate(20deg);
+}
+
+#needle-idle {
+    right: 20px;
+    top: 23px;
 }
 
 #control-buttons {
@@ -194,7 +206,7 @@ html {
 }
 
 .color-blue {
-    background-color: deepskyblue;
+    background-color: dodgerblue;
 }
 
 .color-red {
@@ -202,7 +214,7 @@ html {
 }
 
 .color-purple {
-    background-color: darkviolet;
+    background-color: plum;
 }
 
 .color-yellow {
