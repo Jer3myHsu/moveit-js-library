@@ -1,8 +1,7 @@
 "use strict";
 
-const log = console.log;//REMOVE ME
 let heldElement = undefined;
-const moveItGroup = {
+const moveIt = {
     id: undefined,
     itemClassName: undefined,
     getItems: undefined,
@@ -32,35 +31,35 @@ function initializeGroup(groupId, itemClassName) {
         items.map(item => dragProperty.push(undefined));
         return dragProperty;
     }
-    moveItGroup.id = groupId;
-    moveItGroup.itemClassName = itemClassName;
-    moveItGroup.getItems = () => getItems(document.querySelector("#" + moveItGroup.id), moveItGroup.itemClassName, []);
-    moveItGroup.dragProperty = initialDragProperty(moveItGroup.getItems());
-    initializeId(moveItGroup.getItems(), groupId);
+    moveIt.id = groupId;
+    moveIt.itemClassName = itemClassName;
+    moveIt.getItems = () => getItems(document.querySelector("#" + moveIt.id), moveIt.itemClassName, []);
+    moveIt.dragProperty = initialDragProperty(moveIt.getItems());
+    initializeId(moveIt.getItems(), groupId);
 }
 
 function isInGroup(item) {
     const classes = item.className.split(" ");
-    return classes.includes(moveItGroup.itemClassName);
+    return classes.includes(moveIt.itemClassName);
 }
 
 function canDragWith(srcId, destId) {
-    return moveItGroup.dragProperty.length > srcId && moveItGroup.dragProperty[srcId] ?
-        moveItGroup.dragProperty[srcId].includes(destId) : true;
+    return moveIt.dragProperty.length > srcId && moveIt.dragProperty[srcId] ?
+        moveIt.dragProperty[srcId].includes(destId) : true;
 }
 
 function getDragWith(itemId) {
     const newProps = [];
-    if (moveItGroup.dragProperty[itemId]) {
-        moveItGroup.dragProperty[itemId].map(id => {
-            if (id < moveItGroup.dragProperty.length && id >= 0 && id !== itemId) {
+    if (moveIt.dragProperty[itemId]) {
+        moveIt.dragProperty[itemId].map(id => {
+            if (id < moveIt.dragProperty.length && id >= 0 && id !== itemId) {
                 newProps.push(id);
             }
         });
         newProps.sort((a, b) => a - b);
-        moveItGroup.dragProperty[itemId] = newProps;
+        moveIt.dragProperty[itemId] = newProps;
     } else {
-        moveItGroup.dragProperty.map((prop, i) => i !== itemId && newProps.push(i));
+        moveIt.dragProperty.map((prop, i) => i !== itemId && newProps.push(i));
     }
     return newProps;
 }
@@ -68,21 +67,21 @@ function getDragWith(itemId) {
 function addDraggableWith(srcIdArr, destIdArr) {
     const allIdArr = [];
     if (srcIdArr === undefined) {
-        moveItGroup.dragProperty.map((prop, i) => allIdArr.push(i));
+        moveIt.dragProperty.map((prop, i) => allIdArr.push(i));
     }
     (srcIdArr || allIdArr).map(srcId => {
-        if (moveItGroup.dragProperty.length <= srcId) {
+        if (moveIt.dragProperty.length <= srcId) {
             return;
         }
         if(destIdArr === undefined) {
-            moveItGroup.dragProperty[srcId] = undefined;
-        } else if (moveItGroup.dragProperty[srcId]) {
+            moveIt.dragProperty[srcId] = undefined;
+        } else if (moveIt.dragProperty[srcId]) {
             destIdArr.map(destId => {
-                if (!moveItGroup.dragProperty[srcId].includes(destId) && destId < moveItGroup.dragProperty.length && destId !== srcId) {
-                    moveItGroup.dragProperty[srcId].push(destId);
+                if (!moveIt.dragProperty[srcId].includes(destId) && destId < moveIt.dragProperty.length && destId !== srcId) {
+                    moveIt.dragProperty[srcId].push(destId);
                 }
             });
-            moveItGroup.dragProperty[srcId].sort((a, b) => a - b);
+            moveIt.dragProperty[srcId].sort((a, b) => a - b);
         }
     });
 }
@@ -90,17 +89,17 @@ function addDraggableWith(srcIdArr, destIdArr) {
 function setDraggableWith(srcIdArr, destIdArr) {
     const allIdArr = [];
     if (srcIdArr === undefined) {
-        moveItGroup.dragProperty.map((prop, i) => allIdArr.push(i));
+        moveIt.dragProperty.map((prop, i) => allIdArr.push(i));
     }
     (srcIdArr || allIdArr).map(srcId => {
-        if (moveItGroup.dragProperty.length <= srcId) {
+        if (moveIt.dragProperty.length <= srcId) {
             return;
         }
         if(destIdArr === undefined) {
-            moveItGroup.dragProperty[srcId] = undefined;
+            moveIt.dragProperty[srcId] = undefined;
         } else {
-            moveItGroup.dragProperty[srcId] = destIdArr;
-            moveItGroup.dragProperty[srcId].sort((a, b) => a - b);
+            moveIt.dragProperty[srcId] = destIdArr;
+            moveIt.dragProperty[srcId].sort((a, b) => a - b);
         }
     });
 }
@@ -108,37 +107,37 @@ function setDraggableWith(srcIdArr, destIdArr) {
 function removeDraggableWith(srcIdArr, destIdArr) {
     const allIdArr = [];
     if (srcIdArr === undefined) {
-        moveItGroup.dragProperty.map((prop, i) => allIdArr.push(i));
+        moveIt.dragProperty.map((prop, i) => allIdArr.push(i));
     }
     (srcIdArr || allIdArr).map(srcId => {
-        if (moveItGroup.dragProperty.length <= srcId) {
+        if (moveIt.dragProperty.length <= srcId) {
             return;
         }
         if(destIdArr === undefined) {
-            moveItGroup.dragProperty[srcId] = [];
+            moveIt.dragProperty[srcId] = [];
             return;
-        } else if (!moveItGroup.dragProperty[srcId]) {
+        } else if (!moveIt.dragProperty[srcId]) {
             const allIdArr = [];
-            moveItGroup.dragProperty.map((prop, i) => allIdArr.push(i));
-            moveItGroup.dragProperty[srcId] = allIdArr;
+            moveIt.dragProperty.map((prop, i) => allIdArr.push(i));
+            moveIt.dragProperty[srcId] = allIdArr;
         }
         destIdArr.map(destId => {
-            const index = moveItGroup.dragProperty[srcId].indexOf(destId);
+            const index = moveIt.dragProperty[srcId].indexOf(destId);
             if (index >= 0) {
-                moveItGroup.dragProperty[srcId].splice(index, 1);
+                moveIt.dragProperty[srcId].splice(index, 1);
             }
         });
-        if (allIdArr === moveItGroup.dragProperty[srcId]) {
-            moveItGroup.dragProperty[srcId] = undefined;
+        if (allIdArr === moveIt.dragProperty[srcId]) {
+            moveIt.dragProperty[srcId] = undefined;
         } else {
-            moveItGroup.dragProperty[srcId].sort((a, b) => a - b);
+            moveIt.dragProperty[srcId].sort((a, b) => a - b);
         }
     });
 }
 
 function getItemById(itemId) {
     try {
-        return moveItGroup.getItems().filter(item => parseInt(item.getAttribute("moveIt-id")) === itemId)[0];
+        return moveIt.getItems().filter(item => parseInt(item.getAttribute("moveIt-id")) === itemId)[0];
     } catch(e) {
         return undefined;
     }
@@ -193,7 +192,7 @@ function releaseItem() {
 function getItemMouseOver(e) {
     for (let i = 0; i < e.path.length; i++) {
         const classes = e.path[i].className;
-        if (classes && classes.split(" ").includes(moveItGroup.itemClassName)) {
+        if (classes && classes.split(" ").includes(moveIt.itemClassName)) {
             return e.path[i];
         }
     }

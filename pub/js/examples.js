@@ -1,9 +1,15 @@
+"use strict"
+
+
+const log = console.log;//REMOVE ME
+
 initializeGroup("content", "group-item");
 
+// Records can only be dragged to the empty record
 setDraggableWith(undefined, [getIdByItem(document.querySelector(".empty-record"))]);
 
 function onRecordClick(event) {
-    const recordPlaying = moveItGroup.getItems()[0];
+    const recordPlaying = moveIt.getItems()[0];
     const isPlaying = getIdByItem(recordPlaying);
     // Swap if record is playing or nothing is playing
     if (recordPlaying === event || !isPlaying) {
@@ -20,7 +26,7 @@ function onRecordClick(event) {
 }
 
 function onEmptyRecordClick(event) {
-    const recordPlaying = moveItGroup.getItems()[0];
+    const recordPlaying = moveIt.getItems()[0];
     // Swap something is playing
     if (event !== recordPlaying) {
         recordPlaying.nextElementSibling.innerText = "No Song";
