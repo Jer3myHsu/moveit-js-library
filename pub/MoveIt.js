@@ -5,10 +5,10 @@ let heldElement = undefined;
 const moveItGroup = {
     id: undefined,
     itemClassName: undefined,
-    dragProperty: [],
+    dragProperty: []
 };
 
-function initializeGroup(groupId, itemClassName, itemHeight, itemWidth) {
+function initializeGroup(groupId, itemClassName) {
     function initializeId(items, groupId) {
         for (let i = 0; i < items.length; i++) {
             items[i].setAttribute("moveIt-id", i);
