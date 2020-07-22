@@ -159,20 +159,20 @@ function swap(itemOne, itemTwo) {
     }
 }
 
-function holdItem(item) {
+function holdItem(item, element) {
     heldElement = document.createElement("div");
-    heldElement.innerHTML = item.outerHTML;
+    heldElement.innerHTML = element ? element.outerHTML : item.outerHTML;
     heldElement.setAttribute("body-cursor", document.body.style.cursor);
     heldElement.setAttribute("body-overflow", document.body.style.overflow);
-    heldElement.setAttribute("body-user-select", document.body.style["user-select"]);
+    heldElement.setAttribute("body-user-select", document.body.style.userSelect);
     heldElement.setAttribute("moveIt-id", getIdByItem(item));
     heldElement.style.position = "absolute";
-    heldElement.style["z-index"] = Number.MAX_SAFE_INTEGER;// other notation has issue with hyphen
-    heldElement.style["pointer-events"] = "none";
+    heldElement.style.zIndex = Number.MAX_SAFE_INTEGER;
+    heldElement.style.pointerEvents = "none";
     heldElement.style.visibility = "hidden";
     document.body.style.cursor = "grabbing";
     document.body.style.overflow = "hidden";
-    document.body.style["user-select"] = "none";
+    document.body.style.userSelect = "none";
     document.body.appendChild(heldElement);
 }
 
@@ -182,7 +182,7 @@ function releaseItem() {
         document.body.removeChild(heldElement);
         document.body.style.overflow = heldElement.getAttribute("body-cursor");
         document.body.style.cursor = heldElement.getAttribute("body-overflow");
-        document.body.style["user-select"] = heldElement.getAttribute("body-user-select");
+        document.body.style.userSelect = heldElement.getAttribute("body-user-select");
         const id = getIdByItem(heldElement);
         heldElement = null;
         return id;
