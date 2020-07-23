@@ -6,7 +6,7 @@ const moveIt = {
     getItems: undefined,
     dragProperty: [],
     heldElement: undefined,
-    initializeGroup: (groupId, itemClassName) => {
+    initializeMoveIT: (groupId, itemClassName) => {
         function getItems(element, itemClass, result) {
             if (!element) {
                 return;
@@ -34,6 +34,30 @@ const moveIt = {
         moveIt.getItems = () => getItems(document.querySelector("#" + groupId), itemClassName, []);
         moveIt.dragProperty = initialDragProperty(moveIt.getItems());
         initializeId(moveIt.getItems());
+        window.addEventListener("mousemove", function(e) {
+            if (moveIt.heldElement) {
+                moveIt.heldElement.style.visibility = "visible";
+                const left = e.pageX - moveIt.heldElement.clientWidth / 2;
+                const top = e.pageY - moveIt.heldElement.clientHeight / 2;
+                moveIt.heldElement.style.left = left + "px";
+                moveIt.heldElement.style.top = top + "px";
+            }
+        });
+        window.addEventListener("mousedown", function(e) {
+            const item = moveIt.getItemMouseOver(e);
+            if (item && moveIt.getDragWith(moveIt.getIdByItem(item)).length > 0) {
+                moveIt.holdItem(item);
+            }
+        });
+        window.addEventListener("mouseup", function(e) {
+            const releasedItemId = moveIt.releaseItem();
+            const releasedItem = moveIt.getItemById(releasedItemId);
+            const itemOver = moveIt.getItemMouseOver(e);
+            if (releasedItem && itemOver && itemOver !== releasedItem && moveIt.canDragWith(releasedItemId,
+                moveIt.getIdByItem(itemOver))) {
+                moveIt.swap(itemOver, releasedItem);
+            }
+        });
     },
     isInGroup: (item) => {
         const classes = item.className.split(" ");
@@ -185,30 +209,3 @@ const moveIt = {
         }
     },
 };
-
-window.addEventListener("mousemove", function(e) {
-    if (moveIt.heldElement) {
-        moveIt.heldElement.style.visibility = "visible";
-        const left = e.pageX - moveIt.heldElement.clientWidth / 2;
-        const top = e.pageY - moveIt.heldElement.clientHeight / 2;
-        moveIt.heldElement.style.left = left + "px";
-        moveIt.heldElement.style.top = top + "px";
-    }
-});
-
-window.addEventListener("mousedown", function(e) {
-    const item = moveIt.getItemMouseOver(e);
-    if (item && moveIt.getDragWith(moveIt.getIdByItem(item)).length > 0) {
-        moveIt.holdItem(item);
-    }
-});
-
-window.addEventListener("mouseup", function(e) {
-    const releasedItemId = moveIt.releaseItem();
-    const releasedItem = moveIt.getItemById(releasedItemId);
-    const itemOver = moveIt.getItemMouseOver(e);
-    if (releasedItem && itemOver && itemOver !== releasedItem && moveIt.canDragWith(releasedItemId,
-        moveIt.getIdByItem(itemOver))) {
-        moveIt.swap(itemOver, releasedItem);
-    }
-});

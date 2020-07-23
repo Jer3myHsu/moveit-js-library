@@ -1,9 +1,8 @@
 "use strict"
 
+const log = console.log;
 
-const log = console.log;//REMOVE ME
-
-moveIt.initializeGroup("content", "group-item");
+moveIt.initializeMoveIT("content", "group-item");
 
 // Records can only be dragged to the empty record
 moveIt.setDraggableWith(undefined, [moveIt.getIdByItem(document.querySelector(".empty-record"))]);
