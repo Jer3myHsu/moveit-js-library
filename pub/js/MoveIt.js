@@ -3,10 +3,15 @@
 const moveIt = {
     id: undefined,
     itemClassName: undefined,
-    getItems: undefined,
     dragProperty: [],
     heldElement: undefined,
-    initializeMoveIT: (groupId, itemClassName) => {
+    holdCursor: undefined,
+    
+    getItems: undefined,
+    onHold: undefined,
+    onRelease: undefined,
+    onSwap: undefined,
+    initializeMoveIt: (groupId, itemClassName) => {
         function getItems(element, itemClass, result) {
             if (!element) {
                 return;
@@ -31,7 +36,7 @@ const moveIt = {
         }
         moveIt.id = groupId;
         moveIt.itemClassName = itemClassName;
-        moveIt.getItems = () => getItems(document.querySelector("#" + groupId), itemClassName, []);
+        moveIt.getItems = () => getItems(document.querySelector("#" + moveIt.id), moveIt.itemClassName, []);
         moveIt.dragProperty = initialDragProperty(moveIt.getItems());
         initializeId(moveIt.getItems());
         window.addEventListener("mousemove", function(e) {
@@ -44,18 +49,22 @@ const moveIt = {
             }
         });
         window.addEventListener("mousedown", function(e) {
-            const item = moveIt.getItemMouseOver(e);
-            if (item && moveIt.getDragWith(moveIt.getIdByItem(item)).length > 0) {
-                moveIt.holdItem(item);
+            if (e.button === 0) {
+                const item = moveIt.getItemMouseOver(e);
+                if (item && moveIt.getDragWith(moveIt.getIdByItem(item)).length > 0) {
+                    moveIt.holdItem(item);
+                }
             }
         });
         window.addEventListener("mouseup", function(e) {
             const releasedItemId = moveIt.releaseItem();
             const releasedItem = moveIt.getItemById(releasedItemId);
             const itemOver = moveIt.getItemMouseOver(e);
+            typeof moveIt.onRelease === "function" && moveIt.onRelease(releasedItem, itemOver);
             if (releasedItem && itemOver && itemOver !== releasedItem && moveIt.canDragWith(releasedItemId,
                 moveIt.getIdByItem(itemOver))) {
-                moveIt.swap(itemOver, releasedItem);
+                typeof moveIt.onSwap === "function" && moveIt.onSwap(releasedItem, itemOver);
+                moveIt.swap(releasedItem, itemOver);
             }
         });
     },
@@ -183,7 +192,8 @@ const moveIt = {
         moveIt.heldElement.style.zIndex = Number.MAX_SAFE_INTEGER;
         moveIt.heldElement.style.pointerEvents = "none";
         moveIt.heldElement.style.visibility = "hidden";
-        document.body.style.cursor = "grabbing";
+        typeof moveIt.onHold === "function" && moveIt.onHold(moveIt.heldElement);
+        document.body.style.cursor = moveIt.holdCursor || "grabbing";
         document.body.style.overflow = "hidden";
         document.body.style.userSelect = "none";
         document.body.appendChild(moveIt.heldElement);

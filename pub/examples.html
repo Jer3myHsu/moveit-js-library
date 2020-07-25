@@ -13,7 +13,7 @@
       <div id="menu">
         <a href="">Home</a>
         <a href="">Images</a>
-        <a id="selected" href="">Songs</a>
+        <a id="selected" href="">Music</a>
         <a href="">Videos</a>
       </div>
       <a id="account" href="">
@@ -21,26 +21,37 @@
       </a>
     </div>
     <div id="content">
-      <div class="shadow-card">
-        <div id="needle-idle" class="needle"></div>
-        <div class="group-item empty-record" onclick="onEmptyRecordClick(this)">
-          <div class="dot"></div>
+      <div style="display: flex; flex-direction: column; align-items: center;">
+        <div class="shadow-card">
+          <div id="needle"></div>
+          <div class="group-item empty-record" onclick="onEmptyRecordClick(this)">
+            <div class="dot"></div>
+          </div>
+          <span>No Song Playing</span>
+          <div id="control-buttons">
+            <button>
+              <img src="res/previous.svg"/>
+            </button>
+            <button>
+              <img src="res/play.svg"/>
+            </button>
+            <button>
+              <img src="res/skip.svg"/>
+            </button>
+          </div>
         </div>
-        <span>No Song</span>
-        <div id="control-buttons">
-          <button>
-            <img src="res/previous.svg"/>
-          </button>
-          <button>
-            <img src="res/play.svg"/>
-          </button>
-          <button>
-            <img src="res/skip.svg"/>
-          </button>
-        </div>
+        <p>Click or Drag a Vinyl Record to play a song</p>
       </div>
       <div class="my-songs">
-        <h1>My Songs</h1>
+        <div class="header">
+          <h1>My Music Library</h1>
+          <div>
+            <img id="delete-button" class="group-item" src="res/delete.svg"/>
+            <button>
+              <img src="res/add.svg"/>
+            </button>
+          </div>
+        </div>
         <div class="shadow-card grid">
           <div class="card">
             <div class="group-item record" onclick="onRecordClick(this)">
@@ -111,7 +122,7 @@
         </div>
       </div>
     </div>
-    <script type="text/javascript" src="/MoveIt.js"></script>
+    <script type="text/javascript" src="js/MoveIt.js"></script>
     <script type="text/javascript" src="js/examples.js"></script>
   </body>
 </html>

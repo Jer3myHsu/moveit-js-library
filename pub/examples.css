@@ -9,15 +9,13 @@ html {
 }
 
 ::-webkit-scrollbar-track {
-    border: 0px solid white;
-    border-radius: 10px;
     margin: 10px;
 }
 
 ::-webkit-scrollbar-thumb {
     border: 6px solid white;
     border-radius: 10px;
-    background: lightgray; 
+    background: lightgray;
 }
 
 ::-webkit-scrollbar-thumb:hover {
@@ -74,6 +72,10 @@ html {
     justify-content: space-evenly;
 }
 
+p {
+    color: #AAAAAA;
+}
+
 .shadow-card {
     position: relative;
     padding: 20px;
@@ -83,25 +85,18 @@ html {
     box-shadow: 0px 0px 10px #AAAAAA;
 }
 
-.needle {
+#needle {
     position: absolute;
+    right: 20px;
+    top: 20px;
     background-color: darkgray;
     z-index: 1;
     height: 120px;
     width: 6px;
     border: 0px;
     border-radius: 3px;
-}
-
-#needle-playing {
-    right: 40px;
-    top: 20px;
-    transform: rotate(20deg);
-}
-
-#needle-idle {
-    right: 20px;
-    top: 23px;
+    transform-origin: 3px 3px;
+    transition: transform 0.2s ease-in-out;
 }
 
 #control-buttons {
@@ -110,19 +105,28 @@ html {
     margin-top: 10px;
 }
 
-#control-buttons button {
+button {
     background-color: Transparent;
     border: none;
     border-radius: 50%;
-    cursor:pointer;
-    outline:none;
+    cursor: pointer;
+    outline: none;
 }
 
-#control-buttons button:hover {
+button:hover {
     background-color: rgb(248, 238, 255);
 }
 
-#control-buttons img {
+#delete-button {
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.1s ease-in-out;
+    float: left;
+    color: red;
+    margin: 5px 10px;
+}
+
+#control-buttons img, .header img {
     margin-top: 4px;
     width: 30px;
 }
@@ -131,7 +135,14 @@ html {
     max-width: 60%;
 }
 
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
 .card {
+    align-self: flex-start;
     background-color: #EEEEEE;
     padding: 10px;
     margin: 10px;
@@ -143,8 +154,11 @@ html {
 .grid {
     display: flex;
     flex-wrap: wrap;
+    align-items: flex-start;
     max-height: calc(100vh - 240px);
-    overflow: auto;
+    min-height: calc(100vh - 240px);
+    min-width: 400px;
+    overflow-y: overlay;
 }
 
 .info {
