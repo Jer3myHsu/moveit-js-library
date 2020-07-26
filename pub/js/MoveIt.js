@@ -181,9 +181,9 @@ const moveIt = {
             itemTwo.outerHTML = temp;
         }
     },
-    holdItem: (item, element) => {
+    holdItem: (item) => {
         moveIt.heldElement = document.createElement("div");
-        moveIt.heldElement.innerHTML = element ? element.outerHTML : item.outerHTML;
+        moveIt.heldElement.innerHTML = item.outerHTML;
         moveIt.heldElement.setAttribute("body-cursor", document.body.style.cursor);
         moveIt.heldElement.setAttribute("body-overflow", document.body.style.overflow);
         moveIt.heldElement.setAttribute("body-user-select", document.body.style.userSelect);
@@ -192,7 +192,7 @@ const moveIt = {
         moveIt.heldElement.style.zIndex = Number.MAX_SAFE_INTEGER;
         moveIt.heldElement.style.pointerEvents = "none";
         moveIt.heldElement.style.visibility = "hidden";
-        typeof moveIt.onHold === "function" && moveIt.onHold(moveIt.heldElement);
+        moveIt.heldElement = typeof moveIt.onHold === "function" ? moveIt.onHold(moveIt.heldElement) || moveIt.heldElement : moveIt.heldElement;
         document.body.style.cursor = moveIt.holdCursor || "grabbing";
         document.body.style.overflow = "hidden";
         document.body.style.userSelect = "none";
