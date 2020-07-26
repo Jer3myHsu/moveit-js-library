@@ -73,12 +73,14 @@ html {
 }
 
 p {
+    margin-top: 10px;
     color: #AAAAAA;
 }
 
 .shadow-card {
     position: relative;
     padding: 20px;
+    margin: 5px;
     background-color: white;
     border: 0px;
     border-radius: 20px;

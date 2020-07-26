@@ -7,23 +7,10 @@ const moveIt = {
     heldElement: undefined,
     holdCursor: undefined,
     
-    getItems: undefined,
     onHold: undefined,
     onRelease: undefined,
     onSwap: undefined,
-    initializeMoveIt: (groupId, itemClassName) => {
-        function getItems(element, itemClass, result) {
-            if (!element) {
-                return;
-            }
-            if (element.className.split(" ").includes(itemClass)) {
-                result.push(element);
-            } else {
-                getItems(element.firstElementChild, itemClass, result);
-            }
-            getItems(element.nextElementSibling, itemClass, result);
-            return result;
-        }
+    initializeMoveIt: (id, itemClassName) => {
         function initializeId(items) {
             for (let i = 0; i < items.length; i++) {
                 items[i].setAttribute("moveIt-id", i);
@@ -34,9 +21,8 @@ const moveIt = {
             items.map(item => dragProperty.push(undefined));
             return dragProperty;
         }
-        moveIt.id = groupId;
+        moveIt.id = id;
         moveIt.itemClassName = itemClassName;
-        moveIt.getItems = () => getItems(document.querySelector("#" + moveIt.id), moveIt.itemClassName, []);
         moveIt.dragProperty = initialDragProperty(moveIt.getItems());
         initializeId(moveIt.getItems());
         window.addEventListener("mousemove", function(e) {
@@ -67,6 +53,21 @@ const moveIt = {
                 moveIt.swap(releasedItem, itemOver);
             }
         });
+    },
+    getItems: () => {
+        function getItemsHelper(element, itemClass, result) {
+            if (!element) {
+                return;
+            }
+            if (element.className.split(" ").includes(itemClass)) {
+                result.push(element);
+            } else {
+                getItemsHelper(element.firstElementChild, itemClass, result);
+            }
+            getItemsHelper(element.nextElementSibling, itemClass, result);
+            return result;
+        }
+        return getItemsHelper(document.querySelector("#" + moveIt.id), moveIt.itemClassName, []);
     },
     isInGroup: (item) => {
         const classes = item.className.split(" ");
