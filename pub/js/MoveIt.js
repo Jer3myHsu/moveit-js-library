@@ -21,6 +21,16 @@ const moveIt = {
             items.map(item => dragProperty.push(undefined));
             return dragProperty;
         }
+        function mouseMove(e, shiftX, shiftY) {
+            log("k")
+            if (moveIt.heldElement) {
+                moveIt.heldElement.style.visibility = "visible";
+                const left = e.pageX - shiftX;
+                const top = e.pageY - shiftY;
+                moveIt.heldElement.style.left = left + "px";
+                moveIt.heldElement.style.top = top + "px";
+            }
+        }
         moveIt.id = id;
         moveIt.itemClassName = itemClassName;
         moveIt.dragProperty = initialDragProperty(moveIt.getItems());
@@ -32,30 +42,24 @@ const moveIt = {
                     moveIt.holdItem(item);
                     const shiftX = e.clientX - item.getBoundingClientRect().left;
                     const shiftY = e.clientY - item.getBoundingClientRect().top;
-                    window.addEventListener("mousemove", function(e) {
-                        if (moveIt.heldElement) {
-                            moveIt.heldElement.style.visibility = "visible";
-                            const left = e.pageX - shiftX;
-                            const top = e.pageY - shiftY;
-                            moveIt.heldElement.style.left = left + "px";
-                            moveIt.heldElement.style.top = top + "px";
+                    const mouseListener = (e) => mouseMove(e, shiftX, shiftY);
+                    window.addEventListener("mousemove", mouseListener);
+                    window.addEventListener("mouseup", function(e) {
+                        const releasedItemId = moveIt.releaseItem();
+                        const releasedItem = moveIt.getItemById(releasedItemId);
+                        const itemOver = moveIt.getItemMouseOver(e);
+                        typeof moveIt.onRelease === "function" && moveIt.onRelease(releasedItem, itemOver);
+                        if (releasedItem && itemOver && itemOver !== releasedItem && moveIt.canDragWith(releasedItemId,
+                            moveIt.getIdByItem(itemOver))) {
+                            typeof moveIt.onSwap === "function" && moveIt.onSwap(releasedItem, itemOver);
+                            moveIt.swap(releasedItem, itemOver);
                         }
-                    });
+                        window.removeEventListener("mousemove", mouseListener);
+                    }, {once: true});
                 }
             }
         });
-        window.addEventListener("mouseup", function(e) {
-            const releasedItemId = moveIt.releaseItem();
-            const releasedItem = moveIt.getItemById(releasedItemId);
-            const itemOver = moveIt.getItemMouseOver(e);
-            typeof moveIt.onRelease === "function" && moveIt.onRelease(releasedItem, itemOver);
-            if (releasedItem && itemOver && itemOver !== releasedItem && moveIt.canDragWith(releasedItemId,
-                moveIt.getIdByItem(itemOver))) {
-                typeof moveIt.onSwap === "function" && moveIt.onSwap(releasedItem, itemOver);
-                moveIt.swap(releasedItem, itemOver);
-                window.removeEventListener("mousemove", () => {});
-            }
-        });
+        
     },
     getItems: () => {
         function getItemsHelper(element, itemClass, result) {
