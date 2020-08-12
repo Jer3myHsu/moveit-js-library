@@ -25,20 +25,22 @@ const moveIt = {
         moveIt.itemClassName = itemClassName;
         moveIt.dragProperty = initialDragProperty(moveIt.getItems());
         initializeId(moveIt.getItems());
-        window.addEventListener("mousemove", function(e) {
-            if (moveIt.heldElement) {
-                moveIt.heldElement.style.visibility = "visible";
-                const left = e.pageX - moveIt.heldElement.clientWidth / 2;
-                const top = e.pageY - moveIt.heldElement.clientHeight / 2;
-                moveIt.heldElement.style.left = left + "px";
-                moveIt.heldElement.style.top = top + "px";
-            }
-        });
         window.addEventListener("mousedown", function(e) {
             if (e.button === 0) {
                 const item = moveIt.getItemMouseOver(e);
                 if (item && moveIt.getDragWith(moveIt.getIdByItem(item)).length > 0) {
                     moveIt.holdItem(item);
+                    const shiftX = e.clientX - item.getBoundingClientRect().left;
+                    const shiftY = e.clientY - item.getBoundingClientRect().top;
+                    window.addEventListener("mousemove", function(e) {
+                        if (moveIt.heldElement) {
+                            moveIt.heldElement.style.visibility = "visible";
+                            const left = e.pageX - shiftX;
+                            const top = e.pageY - shiftY;
+                            moveIt.heldElement.style.left = left + "px";
+                            moveIt.heldElement.style.top = top + "px";
+                        }
+                    });
                 }
             }
         });
@@ -51,6 +53,7 @@ const moveIt = {
                 moveIt.getIdByItem(itemOver))) {
                 typeof moveIt.onSwap === "function" && moveIt.onSwap(releasedItem, itemOver);
                 moveIt.swap(releasedItem, itemOver);
+                window.removeEventListener("mousemove", () => {});
             }
         });
     },
@@ -189,7 +192,7 @@ const moveIt = {
         moveIt.heldElement.setAttribute("body-overflow", document.body.style.overflow);
         moveIt.heldElement.setAttribute("body-user-select", document.body.style.userSelect);
         moveIt.heldElement.setAttribute("moveIt-id", moveIt.getIdByItem(item));
-        moveIt.heldElement.style.position = "absolute";
+        moveIt.heldElement.style.position = "fixed";
         moveIt.heldElement.style.zIndex = Number.MAX_SAFE_INTEGER;
         moveIt.heldElement.style.pointerEvents = "none";
         moveIt.heldElement.style.visibility = "hidden";
