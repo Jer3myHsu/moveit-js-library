@@ -7,6 +7,7 @@ const moveIt = {
     heldElement: undefined,
     heldElementPlaceholder: undefined,
     heldElementClass: undefined,
+    hoveredId: undefined,
     hoverElementPlaceholder: undefined,
     hoverElementClass: undefined,
 
@@ -48,6 +49,24 @@ const moveIt = {
         }
         function mouseMove(e, shiftX, shiftY) {
             if (moveIt.heldElement) {
+                const item = moveIt.getItemMouseOver(e);
+                if (item && typeof moveIt.hoveredId !== "number") {
+                    moveIt.hoveredId = moveIt.getIdByItem(item);
+                    const itemProperty = moveIt.getItemProperty(moveIt.hoveredId);
+                    moveIt.hoverElementPlaceholder = item.outerHTML;
+                    moveIt.hoverElementClass = item.cloneNode(true).className;
+                    const replaceElement = (itemProperty.elementHover || moveIt.elementHover) || document.createElement("div");
+                    replaceElement.setAttribute("moveit-id", moveIt.hoveredId);
+                    replaceElement.setAttribute("moveit-item", undefined);
+                    replaceElement.setAttribute("style", itemProperty.elementHoverStyle || moveIt.elementHoverStyle);
+                    item.outerHTML = replaceElement.outerHTML;
+                } else if (!item && typeof moveIt.hoveredId === "number") {
+                    const item = moveIt.getItemById(moveIt.hoveredId);
+                    item.className = moveIt.hoverElementClass;
+                    item.outerHTML = moveIt.hoverElementPlaceholder;
+                    item.removeAttribute("style");
+                    moveIt.hoveredId = undefined;
+                }
                 const left = e.pageX - shiftX;
                 const top = e.pageY - shiftY;
                 moveIt.heldElement.style.left = left + "px";
@@ -65,13 +84,13 @@ const moveIt = {
                     moveIt.holdItem(item);
                     const shiftX = e.pageX - item.getBoundingClientRect().left;
                     const shiftY = e.pageY - item.getBoundingClientRect().top;
-                    const id = moveIt.getIdByItem(item);
-                    moveIt.heldElementClass = item.className;
-                    item.className = "";
-                    log(moveIt.elementWhenHeld)
-                    log((itemProperty.elementWhenHeld || moveIt.elementWhenHeld) || "")
-                    item.innerHTML = (itemProperty.elementWhenHeld || moveIt.elementWhenHeld) || "";
-                    item.setAttribute("moveit-id", id);
+                    moveIt.heldElementPlaceholder = item.outerHTML;
+                    moveIt.heldElementClass = item.cloneNode(true).className;
+                    const replaceElement = (itemProperty.elementWhenHeld || moveIt.elementWhenHeld) || document.createElement("div");
+                    replaceElement.setAttribute("moveit-id", moveIt.heldId);
+                    replaceElement.setAttribute("moveit-item", undefined);
+                    item.setAttribute("style", itemProperty.elementWhenHeldStyle || moveIt.elementWhenHeldStyle);
+                    item.outerHTML = replaceElement.outerHTML;
                     item.setAttribute("style", itemProperty.elementWhenHeldStyle || moveIt.elementWhenHeldStyle);
                     mouseMove(e, shiftX, shiftY);
                     const mouseListener = (e) => mouseMove(e, shiftX, shiftY);
@@ -81,7 +100,7 @@ const moveIt = {
                         const releasedItem = moveIt.getItemById(releasedItemId);
                         const itemOver = moveIt.getItemMouseOver(e);
                         typeof moveIt.onRelease === "function" && moveIt.onRelease(releasedItem, itemOver);
-                        if (releasedItem && itemOver && itemOver !== releasedItem && moveIt.canDragWith(releasedItemId,
+                        if (releasedItem && itemOver && moveIt.canDragWith(releasedItemId,
                             moveIt.getIdByItem(itemOver))) {
                             typeof moveIt.onSwap === "function" && moveIt.onSwap(releasedItem, itemOver);
                             moveIt.swap(releasedItem, itemOver);
@@ -114,7 +133,7 @@ const moveIt = {
     },
     canDragWith: (srcId, destId) => {
         return moveIt.itemProperty.length > srcId && moveIt.getItemProperty(srcId).swapGroup ?
-            moveIt.getItemProperty(srcId).swapGroup.includes(destId) : true;
+            moveIt.getItemProperty(srcId).swapGroup.includes(destId) && srcId !== destId : true;
     },
     cleanItemProperty: (removeBadId) => {
 
@@ -217,7 +236,6 @@ const moveIt = {
         moveIt.heldId = moveIt.getIdByItem(item);
         const itemProperty = moveIt.getItemProperty(moveIt.heldId);
         moveIt.heldElement = document.createElement("div");
-        moveIt.heldElementPlaceholder = item.innerHTML;
         moveIt.heldElement.innerHTML = (itemProperty.elementHeld || moveIt.elementHeld) || "";
         moveIt.heldElement.setAttribute("style", itemProperty.elementHeldStyle || moveIt.elementHeldStyle);
         moveIt.heldElement.setAttribute("body-cursor", document.body.style.cursor);
@@ -240,18 +258,19 @@ const moveIt = {
             document.body.style.overflow = moveIt.heldElement.getAttribute("body-cursor");
             document.body.style.cursor = moveIt.heldElement.getAttribute("body-overflow");
             document.body.style.userSelect = moveIt.heldElement.getAttribute("body-user-select");
-            const id = moveIt.getIdByItem(moveIt.heldElement);
+            const id = moveIt.heldId;
             moveIt.heldElement = null;
             const item = moveIt.getItemById(id);
             item.className = moveIt.heldElementClass;
-            item.innerHTML = moveIt.heldElementPlaceholder;
+            item.outerHTML = moveIt.heldElementPlaceholder;
+            moveIt.heldId = undefined;
             return id;
         }
     },
     getItemMouseOver: (e) => {
         for (let i = 0; i < e.path.length - 2; i++) {
             const attributes = e.path[i].getAttributeNames();
-            if (attributes && attributes.includes("moveit-item")) {
+            if (attributes && attributes.includes("moveit-item") && moveIt.getIdByItem(e.path[i]) !== moveIt.heldId) {
                 return e.path[i];
             }
         }

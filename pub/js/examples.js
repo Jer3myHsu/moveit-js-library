@@ -8,8 +8,13 @@ moveIt.initializeMoveIt("content");
 moveIt.setDraggableWith(undefined, [moveIt.getIdByItem(document.querySelector(".empty-record"))]);
 moveIt.setDraggableWith([0, moveIt.getIdByItem(document.querySelector("#delete-button"))], []);
 
+const placeholder = document.querySelector(".empty-record").cloneNode(true);
+placeholder.removeAttribute("moveit-item");
+placeholder.removeAttribute("moveit-id");
+
 moveIt.itemProperty.map((prop, i) => {
     prop.elementHeld = moveIt.getItemById(i).outerHTML;
+    prop.elementHover = placeholder;
 });
 
 function setTurntable(record, text) {
@@ -29,15 +34,6 @@ function onRecordClick(event) {
             setTurntable(emptyRecord, event.nextElementSibling.firstElementChild.innerText);
         }
         moveIt.swap(event, emptyRecord);
-    }
-}
-
-function onEmptyRecordClick(event) {
-    const recordPlaying = moveIt.getItems()[0];
-    // Swap something is playing
-    if (event !== recordPlaying) {
-        setTurntable(recordPlaying);
-        moveIt.swap(event, recordPlaying);
     }
 }
 
@@ -68,7 +64,7 @@ function onRecordSwap(heldRecord, emptyRecord) {
 }
 
 moveIt.elementHeldStyle = "opacity: 0.8;";
-moveIt.elementWhenHeld = document.querySelector(".empty-record").outerHTML;
+moveIt.elementWhenHeld = placeholder;
 moveIt.onHold = onRecordHold;
 moveIt.onRelease = onRecordRelease;
 moveIt.onSwap = onRecordSwap;
