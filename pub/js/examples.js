@@ -2,11 +2,15 @@
 
 const log = console.log;
 
-moveIt.initializeMoveIt("content", "group-item");
+moveIt.initializeMoveIt("content");
 
 // Records can only be dragged to the empty record and delete
 moveIt.setDraggableWith(undefined, [moveIt.getIdByItem(document.querySelector(".empty-record"))]);
 moveIt.setDraggableWith([0, moveIt.getIdByItem(document.querySelector("#delete-button"))], []);
+
+moveIt.itemProperty.map((prop, i) => {
+    prop.elementHeld = moveIt.getItemById(i).outerHTML;
+});
 
 function setTurntable(record, text) {
     record.nextElementSibling.innerText = text || "No Song Playing";
@@ -41,7 +45,6 @@ function onRecordHold(record) {
     const deleteButton = document.querySelector("#delete-button");
     deleteButton.style.visibility = "visible";
     deleteButton.style.opacity = "1";
-    record.style.opacity = 0.8;
 }
 
 function onRecordRelease(heldRecord, element) {
@@ -64,6 +67,8 @@ function onRecordSwap(heldRecord, emptyRecord) {
     }
 }
 
+moveIt.elementHeldStyle = "opacity: 0.8;";
+moveIt.elementWhenHeld = document.querySelector(".empty-record").outerHTML;
 moveIt.onHold = onRecordHold;
 moveIt.onRelease = onRecordRelease;
 moveIt.onSwap = onRecordSwap;

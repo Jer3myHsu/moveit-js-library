@@ -2,29 +2,52 @@
 
 const moveIt = {
     id: undefined,
-    itemClassName: undefined,
-    dragProperty: [],
+    itemProperty: [],
+    heldId: undefined,
     heldElement: undefined,
+    heldElementPlaceholder: undefined,
+    heldElementClass: undefined,
+    hoverElementPlaceholder: undefined,
+    hoverElementClass: undefined,
+
     holdCursor: undefined,
-    
+    elementHeld: undefined,
+    elementHeldStyle: undefined,
+    elementHover: undefined,
+    elementHoverStyle: undefined,
+    elementWhenHeld: undefined,
+    elementWhenHeldStyle: undefined,
+    animation: undefined,
     onHold: undefined,
     onRelease: undefined,
     onSwap: undefined,
-    initializeMoveIt: (id, itemClassName) => {
+    initializeMoveIt: (id) => {
         function initializeId(items) {
             for (let i = 0; i < items.length; i++) {
-                items[i].setAttribute("moveIt-id", i);
+                items[i].setAttribute("moveit-id", i);
             }
         }
-        function initialDragProperty(items) {
-            const dragProperty = [];
-            items.map(item => dragProperty.push(undefined));
-            return dragProperty;
+        function initialItemProperty(items) {
+            const itemProperty = [];
+            items.map((item, i) => itemProperty.push({
+                id: i,
+                holdCursor: undefined,
+                elementHeld: undefined,
+                elementHeldStyle: undefined,
+                elementHover: undefined,
+                elementHoverStyle: undefined,
+                elementWhenHeld: undefined,
+                elementWhenHeldStyle: undefined,
+                animation: undefined,
+                onHold: undefined,
+                onRelease: undefined,
+                onSwap: undefined,
+                swapGroup: undefined
+            }));
+            return itemProperty;
         }
         function mouseMove(e, shiftX, shiftY) {
-            log("k")
             if (moveIt.heldElement) {
-                moveIt.heldElement.style.visibility = "visible";
                 const left = e.pageX - shiftX;
                 const top = e.pageY - shiftY;
                 moveIt.heldElement.style.left = left + "px";
@@ -32,16 +55,25 @@ const moveIt = {
             }
         }
         moveIt.id = id;
-        moveIt.itemClassName = itemClassName;
-        moveIt.dragProperty = initialDragProperty(moveIt.getItems());
+        moveIt.itemProperty = initialItemProperty(moveIt.getItems());
         initializeId(moveIt.getItems());
         window.addEventListener("mousedown", function(e) {
             if (e.button === 0) {
                 const item = moveIt.getItemMouseOver(e);
-                if (item && moveIt.getDragWith(moveIt.getIdByItem(item)).length > 0) {
+                const itemProperty = moveIt.getItemProperty(moveIt.getIdByItem(item));
+                if (item && itemProperty.swapGroup.length > 0) {
                     moveIt.holdItem(item);
-                    const shiftX = e.clientX - item.getBoundingClientRect().left;
-                    const shiftY = e.clientY - item.getBoundingClientRect().top;
+                    const shiftX = e.pageX - item.getBoundingClientRect().left;
+                    const shiftY = e.pageY - item.getBoundingClientRect().top;
+                    const id = moveIt.getIdByItem(item);
+                    moveIt.heldElementClass = item.className;
+                    item.className = "";
+                    log(moveIt.elementWhenHeld)
+                    log((itemProperty.elementWhenHeld || moveIt.elementWhenHeld) || "")
+                    item.innerHTML = (itemProperty.elementWhenHeld || moveIt.elementWhenHeld) || "";
+                    item.setAttribute("moveit-id", id);
+                    item.setAttribute("style", itemProperty.elementWhenHeldStyle || moveIt.elementWhenHeldStyle);
+                    mouseMove(e, shiftX, shiftY);
                     const mouseListener = (e) => mouseMove(e, shiftX, shiftY);
                     window.addEventListener("mousemove", mouseListener);
                     window.addEventListener("mouseup", function(e) {
@@ -62,122 +94,114 @@ const moveIt = {
         
     },
     getItems: () => {
-        function getItemsHelper(element, itemClass, result) {
+        function getItemsHelper(element,  result) {
             if (!element) {
                 return;
             }
-            if (element.className.split(" ").includes(itemClass)) {
+            if (element.getAttributeNames().includes("moveit-item")) {
                 result.push(element);
             } else {
-                getItemsHelper(element.firstElementChild, itemClass, result);
+                getItemsHelper(element.firstElementChild, result);
             }
-            getItemsHelper(element.nextElementSibling, itemClass, result);
+            getItemsHelper(element.nextElementSibling, result);
             return result;
         }
-        return getItemsHelper(document.querySelector("#" + moveIt.id), moveIt.itemClassName, []);
+        return getItemsHelper(moveIt.id ? document.querySelector("#" + moveIt.id) : document.body, []);
     },
     isInGroup: (item) => {
-        const classes = item.className.split(" ");
-        return classes.includes(moveIt.itemClassName);
+        const attributes = item.getAttributeNames();
+        return attributes.includes("moveit-item");
     },
     canDragWith: (srcId, destId) => {
-        return moveIt.dragProperty.length > srcId && moveIt.dragProperty[srcId] ?
-            moveIt.dragProperty[srcId].includes(destId) : true;
+        return moveIt.itemProperty.length > srcId && moveIt.getItemProperty(srcId).swapGroup ?
+            moveIt.getItemProperty(srcId).swapGroup.includes(destId) : true;
     },
-    getDragWith: (itemId) => {
-        const newProps = [];
-        if (moveIt.dragProperty[itemId]) {
-            moveIt.dragProperty[itemId].map(id => {
-                if (id < moveIt.dragProperty.length && id >= 0 && id !== itemId) {
-                    newProps.push(id);
-                }
-            });
-            newProps.sort((a, b) => a - b);
-            moveIt.dragProperty[itemId] = newProps;
-        } else {
-            moveIt.dragProperty.map((prop, i) => i !== itemId && newProps.push(i));
-        }
-        return newProps;
+    cleanItemProperty: (removeBadId) => {
+
+    },
+    getItemProperty: (itemId) => {
+        return moveIt.itemProperty.find(item => item.id === itemId);
     },
     addDraggableWith: (srcIdArr, destIdArr) => {
         const allIdArr = [];
         if (srcIdArr === undefined) {
-            moveIt.dragProperty.map((prop, i) => allIdArr.push(i));
+            moveIt.itemProperty.map(prop => allIdArr.push(prop.id));
         }
         (srcIdArr || allIdArr).map(srcId => {
-            if (moveIt.dragProperty.length <= srcId) {
+            // If given id is greater than the maximum possible id, then skip it
+            if (moveIt.itemProperty.length <= srcId) {
                 return;
             }
             if(destIdArr === undefined) {
-                moveIt.dragProperty[srcId] = undefined;
-            } else if (moveIt.dragProperty[srcId]) {
+                moveIt.getItemProperty(srcId).swapGroup = undefined;
+            } else if (moveIt.getItemProperty(srcId).swapGroup) {
                 destIdArr.map(destId => {
-                    if (!moveIt.dragProperty[srcId].includes(destId) &&
-                        destId < moveIt.dragProperty.length && destId !== srcId) {
-                        moveIt.dragProperty[srcId].push(destId);
+                    if (!moveIt.getItemProperty(srcId).swapGroup.includes(destId) &&
+                        destId < moveIt.itemProperty.length && destId !== srcId) {
+                        moveIt.getItemProperty(srcId).swapGroup.push(destId);
                     }
                 });
-                moveIt.dragProperty[srcId].sort((a, b) => a - b);
+                moveIt.getItemProperty(srcId).swapGroup.sort((a, b) => a - b);
             }
         });
     },
     setDraggableWith: (srcIdArr, destIdArr) => {
         const allIdArr = [];
         if (srcIdArr === undefined) {
-            moveIt.dragProperty.map((prop, i) => allIdArr.push(i));
+            moveIt.itemProperty.map(prop => allIdArr.push(prop.id));
         }
-        (srcIdArr || allIdArr).map(srcId => {
-            if (moveIt.dragProperty.length <= srcId) {
+        (srcIdArr || allIdArr).forEach(srcId => {
+            if (moveIt.itemProperty.length <= srcId) {
                 return;
             }
             if(destIdArr === undefined) {
-                moveIt.dragProperty[srcId] = undefined;
+                moveIt.getItemProperty(srcId).swapGroup = undefined;
             } else {
-                moveIt.dragProperty[srcId] = destIdArr;
-                moveIt.dragProperty[srcId].sort((a, b) => a - b);
+                moveIt.getItemProperty(srcId).swapGroup = destIdArr;
+                moveIt.getItemProperty(srcId).swapGroup.sort((a, b) => a - b);
             }
         });
     },
     removeDraggableWith: (srcIdArr, destIdArr) => {
         const allIdArr = [];
         if (srcIdArr === undefined) {
-            moveIt.dragProperty.map((prop, i) => allIdArr.push(i));
+            moveIt.itemProperty.map(prop => allIdArr.push(prop.id));
         }
         (srcIdArr || allIdArr).map(srcId => {
-            if (moveIt.dragProperty.length <= srcId) {
+            if (moveIt.itemProperty.length <= srcId) {
                 return;
             }
             if(destIdArr === undefined) {
-                moveIt.dragProperty[srcId] = [];
+                moveIt.getItemProperty(srcId).swapGroup = [];
                 return;
-            } else if (!moveIt.dragProperty[srcId]) {
+            } else if (!moveIt.itemProperty[srcId]) {
                 const allIdArr = [];
-                moveIt.dragProperty.map((prop, i) => allIdArr.push(i));
-                moveIt.dragProperty[srcId] = allIdArr;
+                moveIt.itemProperty.map(prop => allIdArr.push(prop.id));
+                moveIt.getItemProperty(srcId).swapGroup = allIdArr;
             }
             destIdArr.map(destId => {
-                const index = moveIt.dragProperty[srcId].indexOf(destId);
+                const index = moveIt.getItemProperty(srcId).swapGroup.indexOf(destId);
                 if (index >= 0) {
-                    moveIt.dragProperty[srcId].splice(index, 1);
+                    moveIt.getItemProperty(srcId).swapGroup.splice(index, 1);
                 }
             });
-            if (allIdArr === moveIt.dragProperty[srcId]) {
-                moveIt.dragProperty[srcId] = undefined;
+            if (allIdArr === moveIt.getItemProperty(srcId).swapGroup) {
+                moveIt.getItemProperty(srcId).swapGroup = undefined;
             } else {
-                moveIt.dragProperty[srcId].sort((a, b) => a - b);
+                moveIt.getItemProperty(srcId).swapGroup.sort((a, b) => a - b);
             }
         });
     },
     getItemById: (itemId) => {
         try {
-            return moveIt.getItems().filter(item => parseInt(item.getAttribute("moveIt-id")) === itemId)[0];
+            return moveIt.getItems().filter(item => parseInt(item.getAttribute("moveit-id")) === itemId)[0];
         } catch(e) {
             return undefined;
         }
     },
     getIdByItem: (item) => {
         try {
-            return parseInt(item.getAttribute("moveIt-id"));
+            return parseInt(item.getAttribute("moveit-id"));
         } catch(e) {
             return undefined;
         }
@@ -190,18 +214,21 @@ const moveIt = {
         }
     },
     holdItem: (item) => {
+        moveIt.heldId = moveIt.getIdByItem(item);
+        const itemProperty = moveIt.getItemProperty(moveIt.heldId);
         moveIt.heldElement = document.createElement("div");
-        moveIt.heldElement.innerHTML = item.outerHTML;
+        moveIt.heldElementPlaceholder = item.innerHTML;
+        moveIt.heldElement.innerHTML = (itemProperty.elementHeld || moveIt.elementHeld) || "";
+        moveIt.heldElement.setAttribute("style", itemProperty.elementHeldStyle || moveIt.elementHeldStyle);
         moveIt.heldElement.setAttribute("body-cursor", document.body.style.cursor);
         moveIt.heldElement.setAttribute("body-overflow", document.body.style.overflow);
         moveIt.heldElement.setAttribute("body-user-select", document.body.style.userSelect);
-        moveIt.heldElement.setAttribute("moveIt-id", moveIt.getIdByItem(item));
+        moveIt.heldElement.setAttribute("moveit-id", moveIt.heldId);
         moveIt.heldElement.style.position = "fixed";
         moveIt.heldElement.style.zIndex = Number.MAX_SAFE_INTEGER;
         moveIt.heldElement.style.pointerEvents = "none";
-        moveIt.heldElement.style.visibility = "hidden";
-        moveIt.heldElement = typeof moveIt.onHold === "function" ? moveIt.onHold(moveIt.heldElement) || moveIt.heldElement : moveIt.heldElement;
-        document.body.style.cursor = moveIt.holdCursor || "grabbing";
+        itemProperty.onHold ? itemProperty.onHold(moveIt.heldElement) : (moveIt.onHold && moveIt.onHold(moveIt.heldElement));
+        document.body.style.cursor = (itemProperty.holdCursor || moveIt.holdCursor) || document.body.style.cursor;
         document.body.style.overflow = "hidden";
         document.body.style.userSelect = "none";
         document.body.appendChild(moveIt.heldElement);
@@ -215,13 +242,16 @@ const moveIt = {
             document.body.style.userSelect = moveIt.heldElement.getAttribute("body-user-select");
             const id = moveIt.getIdByItem(moveIt.heldElement);
             moveIt.heldElement = null;
+            const item = moveIt.getItemById(id);
+            item.className = moveIt.heldElementClass;
+            item.innerHTML = moveIt.heldElementPlaceholder;
             return id;
         }
     },
     getItemMouseOver: (e) => {
-        for (let i = 0; i < e.path.length; i++) {
-            const classes = e.path[i].className;
-            if (classes && classes.split(" ").includes(moveIt.itemClassName)) {
+        for (let i = 0; i < e.path.length - 2; i++) {
+            const attributes = e.path[i].getAttributeNames();
+            if (attributes && attributes.includes("moveit-item")) {
                 return e.path[i];
             }
         }
