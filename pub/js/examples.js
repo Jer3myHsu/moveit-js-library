@@ -12,11 +12,6 @@ const placeholder = document.querySelector(".empty-record").cloneNode(true);
 placeholder.removeAttribute("moveit-item");
 placeholder.removeAttribute("moveit-id");
 
-moveIt.itemProperty.map((prop, i) => {
-    prop.elementHeld = moveIt.getItemById(i).outerHTML;
-    prop.elementHover = placeholder;
-});
-
 function setTurntable(record, text) {
     record.nextElementSibling.innerText = text || "No Song Playing";
     document.querySelector("#needle").style.transform = text ? "rotate(20deg)" : "rotate(0deg)";

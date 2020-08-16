@@ -5,10 +5,10 @@ const moveIt = {
     itemProperty: [],
     heldId: undefined,
     heldElement: undefined,
-    heldElementPlaceholder: undefined,
+    heldElementHTML: undefined,
     heldElementClass: undefined,
-    hoveredId: undefined,
-    hoverElementPlaceholder: undefined,
+    hoverId: undefined,
+    hoverElementHTML: undefined,
     hoverElementClass: undefined,
 
     holdCursor: undefined,
@@ -50,22 +50,11 @@ const moveIt = {
         function mouseMove(e, shiftX, shiftY) {
             if (moveIt.heldElement) {
                 const item = moveIt.getItemMouseOver(e);
-                if (item && typeof moveIt.hoveredId !== "number") {
-                    moveIt.hoveredId = moveIt.getIdByItem(item);
-                    const itemProperty = moveIt.getItemProperty(moveIt.hoveredId);
-                    moveIt.hoverElementPlaceholder = item.outerHTML;
-                    moveIt.hoverElementClass = item.cloneNode(true).className;
-                    const replaceElement = (itemProperty.elementHover || moveIt.elementHover) || document.createElement("div");
-                    replaceElement.setAttribute("moveit-id", moveIt.hoveredId);
-                    replaceElement.setAttribute("moveit-item", undefined);
-                    replaceElement.setAttribute("style", itemProperty.elementHoverStyle || moveIt.elementHoverStyle);
-                    item.outerHTML = replaceElement.outerHTML;
-                } else if (!item && typeof moveIt.hoveredId === "number") {
-                    const item = moveIt.getItemById(moveIt.hoveredId);
-                    item.className = moveIt.hoverElementClass;
-                    item.outerHTML = moveIt.hoverElementPlaceholder;
-                    item.removeAttribute("style");
-                    moveIt.hoveredId = undefined;
+                if (item && typeof moveIt.hoverId !== "number") {
+                    moveIt.hoverId = moveIt.getIdByItem(item);
+                    moveIt.switchItem(item, "hover");
+                } else if (!item && typeof moveIt.hoverId === "number") {
+                    moveIt.restoreItem("hover");
                 }
                 const left = e.pageX - shiftX;
                 const top = e.pageY - shiftY;
@@ -76,7 +65,7 @@ const moveIt = {
         moveIt.id = id;
         moveIt.itemProperty = initialItemProperty(moveIt.getItems());
         initializeId(moveIt.getItems());
-        window.addEventListener("mousedown", function(e) {
+        window.addEventListener("mousedown", function(e)  {
             if (e.button === 0) {
                 const item = moveIt.getItemMouseOver(e);
                 const itemProperty = moveIt.getItemProperty(moveIt.getIdByItem(item));
@@ -84,19 +73,14 @@ const moveIt = {
                     moveIt.holdItem(item);
                     const shiftX = e.pageX - item.getBoundingClientRect().left;
                     const shiftY = e.pageY - item.getBoundingClientRect().top;
-                    moveIt.heldElementPlaceholder = item.outerHTML;
-                    moveIt.heldElementClass = item.cloneNode(true).className;
-                    const replaceElement = (itemProperty.elementWhenHeld || moveIt.elementWhenHeld) || document.createElement("div");
-                    replaceElement.setAttribute("moveit-id", moveIt.heldId);
-                    replaceElement.setAttribute("moveit-item", undefined);
-                    item.setAttribute("style", itemProperty.elementWhenHeldStyle || moveIt.elementWhenHeldStyle);
-                    item.outerHTML = replaceElement.outerHTML;
-                    item.setAttribute("style", itemProperty.elementWhenHeldStyle || moveIt.elementWhenHeldStyle);
+                    moveIt.switchItem(item, "held")
                     mouseMove(e, shiftX, shiftY);
                     const mouseListener = (e) => mouseMove(e, shiftX, shiftY);
                     window.addEventListener("mousemove", mouseListener);
                     window.addEventListener("mouseup", function(e) {
+                        window.removeEventListener("mousemove", mouseListener);
                         const releasedItemId = moveIt.releaseItem();
+                        moveIt.restoreItem("held");
                         const releasedItem = moveIt.getItemById(releasedItemId);
                         const itemOver = moveIt.getItemMouseOver(e);
                         typeof moveIt.onRelease === "function" && moveIt.onRelease(releasedItem, itemOver);
@@ -105,7 +89,7 @@ const moveIt = {
                             typeof moveIt.onSwap === "function" && moveIt.onSwap(releasedItem, itemOver);
                             moveIt.swap(releasedItem, itemOver);
                         }
-                        window.removeEventListener("mousemove", mouseListener);
+                        moveIt.restoreItem("hover");//Must restore at the end since losing parent will cause swap issue
                     }, {once: true});
                 }
             }
@@ -227,16 +211,17 @@ const moveIt = {
     },
     swap: (itemOne, itemTwo) => {
         if (moveIt.isInGroup(itemOne) && moveIt.isInGroup(itemTwo)) {
-            const temp = itemOne.outerHTML;
-            itemOne.outerHTML = itemTwo.outerHTML;
-            itemTwo.outerHTML = temp;
+            const one = itemOne.cloneNode(true);
+            const two = itemTwo.cloneNode(true);
+            itemTwo.parentElement.replaceChild(one, itemTwo);
+            itemOne.parentElement.replaceChild(two, itemOne);
         }
     },
     holdItem: (item) => {
         moveIt.heldId = moveIt.getIdByItem(item);
         const itemProperty = moveIt.getItemProperty(moveIt.heldId);
         moveIt.heldElement = document.createElement("div");
-        moveIt.heldElement.innerHTML = (itemProperty.elementHeld || moveIt.elementHeld) || "";
+        moveIt.heldElement.innerHTML = ((itemProperty.elementHeld || moveIt.elementHeld) || item).outerHTML;
         moveIt.heldElement.setAttribute("style", itemProperty.elementHeldStyle || moveIt.elementHeldStyle);
         moveIt.heldElement.setAttribute("body-cursor", document.body.style.cursor);
         moveIt.heldElement.setAttribute("body-overflow", document.body.style.overflow);
@@ -258,13 +243,8 @@ const moveIt = {
             document.body.style.overflow = moveIt.heldElement.getAttribute("body-cursor");
             document.body.style.cursor = moveIt.heldElement.getAttribute("body-overflow");
             document.body.style.userSelect = moveIt.heldElement.getAttribute("body-user-select");
-            const id = moveIt.heldId;
             moveIt.heldElement = null;
-            const item = moveIt.getItemById(id);
-            item.className = moveIt.heldElementClass;
-            item.outerHTML = moveIt.heldElementPlaceholder;
-            moveIt.heldId = undefined;
-            return id;
+            return moveIt.heldId;
         }
     },
     getItemMouseOver: (e) => {
@@ -275,4 +255,45 @@ const moveIt = {
             }
         }
     },
+    switchItem: (item, type) => {
+        const appendStyle = (element, newStyle) => {
+            return element.getAttribute('style') + (newStyle || '');
+        }
+        if (type === "held") {
+            const itemProperty = moveIt.getItemProperty(moveIt.heldId);
+            const replaceElement = (itemProperty.elementWhenHeld || moveIt.elementWhenHeld) || item;
+            moveIt.heldElementHTML = item.outerHTML;
+            moveIt.heldElementClass = item.cloneNode(true).className;
+            replaceElement.setAttribute("moveit-id", moveIt.heldId);
+            replaceElement.setAttribute("moveit-item", undefined);
+            replaceElement.setAttribute("style", appendStyle(replaceElement, (itemProperty.elementWhenHeldStyle || moveIt.elementWhenHeldStyle)));
+            item.outerHTML = replaceElement.outerHTML;
+        } else if (type === "hover") {
+            const itemProperty = moveIt.getItemProperty(moveIt.hoverId);
+            const replaceElement = (itemProperty.elementHover || moveIt.elementHover) || item;
+            moveIt.hoverElementHTML = item.outerHTML;
+            moveIt.hoverElementClass = item.cloneNode(true).className;
+            replaceElement.setAttribute("moveit-id", moveIt.hoverId);
+            replaceElement.setAttribute("moveit-item", undefined);
+            replaceElement.setAttribute("style", appendStyle(replaceElement, (itemProperty.elementHoverStyle || moveIt.elementHoverStyle)));
+            item.outerHTML = replaceElement.outerHTML;
+        }
+    },
+    restoreItem: (type) => {
+        if (type === "held" && typeof moveIt.heldId === "number") {
+            const item = moveIt.getItemById(moveIt.heldId);
+            item.className = moveIt.heldElementClass;
+            item.outerHTML = moveIt.heldElementHTML;
+            moveIt.heldId = undefined;
+            moveIt.heldElementClass = undefined;
+            moveIt.heldElementHTML = undefined;
+        } else if (type === "hover" && typeof moveIt.hoverId === "number") {
+            const item = moveIt.getItemById(moveIt.hoverId);
+            item.className = moveIt.hoverElementClass;
+            item.outerHTML = moveIt.hoverElementHTML;
+            moveIt.hoverId = undefined;
+            moveIt.hoverElementClass = undefined;
+            moveIt.hoverElementHTML = undefined;
+        }
+    }
 };
