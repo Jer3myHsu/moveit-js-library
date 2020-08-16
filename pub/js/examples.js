@@ -63,3 +63,4 @@ moveIt.elementWhenHeld = placeholder;
 moveIt.onHold = onRecordHold;
 moveIt.onRelease = onRecordRelease;
 moveIt.onSwap = onRecordSwap;
+moveIt.dragWeight = 3;

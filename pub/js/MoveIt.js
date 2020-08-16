@@ -10,6 +10,10 @@ const moveIt = {
     hoverId: undefined,
     hoverElementHTML: undefined,
     hoverElementClass: undefined,
+    x: 0,
+    y: 0,
+    timer: undefined,
+
 
     holdCursor: undefined,
     elementHeld: undefined,
@@ -18,7 +22,7 @@ const moveIt = {
     elementHoverStyle: undefined,
     elementWhenHeld: undefined,
     elementWhenHeldStyle: undefined,
-    animation: undefined,
+    dragWeight: 0,
     onHold: undefined,
     onRelease: undefined,
     onSwap: undefined,
@@ -49,6 +53,12 @@ const moveIt = {
         }
         function mouseMove(e, shiftX, shiftY) {
             if (moveIt.heldElement) {
+                const move = (posX, posY, weight) => {
+                    moveIt.x = ((weight - 1) * moveIt.x + posX) / weight;
+                    moveIt.y = ((weight - 1) * moveIt.y + posY) / weight;
+                    moveIt.heldElement.style.left = moveIt.x + "px";
+                    moveIt.heldElement.style.top = moveIt.y + "px";
+                };
                 const item = moveIt.getItemMouseOver(e);
                 if (item && typeof moveIt.hoverId !== "number") {
                     moveIt.hoverId = moveIt.getIdByItem(item);
@@ -56,10 +66,21 @@ const moveIt = {
                 } else if (!item && typeof moveIt.hoverId === "number") {
                     moveIt.restoreItem("hover");
                 }
-                const left = e.pageX - shiftX;
-                const top = e.pageY - shiftY;
-                moveIt.heldElement.style.left = left + "px";
-                moveIt.heldElement.style.top = top + "px";
+                let weight = Math.max(moveIt.dragWeight * 5, 1);
+
+                // If using interval with a low weight will lag 
+                if (weight > 2) {
+                    clearInterval(moveIt.timer);
+                    moveIt.timer = setInterval(() => {
+                        if (moveIt.heldElement && Math.abs(moveIt.x - e.pageX + shiftX) > 0.1 && Math.abs(moveIt.y - e.pageY + shiftY) > 0.1) {
+                            move(e.pageX - shiftX, e.pageY - shiftY, weight);
+                        } else {
+                            clearInterval(moveIt.timer);
+                        }
+                    },5);
+                } else {
+                    move(e.pageX - shiftX, e.pageY - shiftY, weight);
+                }
             }
         }
         moveIt.id = id;
@@ -75,6 +96,10 @@ const moveIt = {
                     const shiftY = e.pageY - item.getBoundingClientRect().top;
                     moveIt.switchItem(item, "held")
                     mouseMove(e, shiftX, shiftY);
+                    moveIt.x = (e.pageX - shiftX);
+                    moveIt.y = (e.pageY - shiftY);
+                    moveIt.heldElement.style.left = moveIt.x + "px";
+                    moveIt.heldElement.style.top = moveIt.y + "px";
                     const mouseListener = (e) => mouseMove(e, shiftX, shiftY);
                     window.addEventListener("mousemove", mouseListener);
                     window.addEventListener("mouseup", function(e) {
