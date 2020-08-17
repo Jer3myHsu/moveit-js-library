@@ -40,6 +40,12 @@ function onRecordHold(record) {
 
 function onRecordRelease(heldRecord, element) {
     const deleteButton = document.querySelector("#delete-button");
+    const empty = document.querySelector(".empty-record");
+    if (empty !== moveIt.getItems()[0]) {
+        onRecordSwap(heldRecord, empty);
+        moveIt.swap(heldRecord, empty);
+        heldRecord = moveIt.getItemById(moveIt.getIdByItem(heldRecord))
+    }
     if (deleteButton === element) {
         heldRecord.parentElement.parentElement.removeChild(heldRecord.parentElement);
     }
@@ -64,3 +70,4 @@ moveIt.onHold = onRecordHold;
 moveIt.onRelease = onRecordRelease;
 moveIt.onSwap = onRecordSwap;
 moveIt.dragWeight = 3;
+moveIt.holdCenter = false;

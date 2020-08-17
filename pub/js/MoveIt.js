@@ -14,7 +14,6 @@ const moveIt = {
     y: 0,
     timer: undefined,
 
-
     holdCursor: undefined,
     elementHeld: undefined,
     elementHeldStyle: undefined,
@@ -22,6 +21,7 @@ const moveIt = {
     elementHoverStyle: undefined,
     elementWhenHeld: undefined,
     elementWhenHeldStyle: undefined,
+    holdCenter: false,
     dragWeight: 0,
     onHold: undefined,
     onRelease: undefined,
@@ -66,8 +66,7 @@ const moveIt = {
                 } else if (!item && typeof moveIt.hoverId === "number") {
                     moveIt.restoreItem("hover");
                 }
-                let weight = Math.max(moveIt.dragWeight * 5, 1);
-
+                const weight = Math.max(moveIt.dragWeight * 5, 1);
                 // If using interval with a low weight will lag 
                 if (weight > 2) {
                     clearInterval(moveIt.timer);
@@ -90,14 +89,13 @@ const moveIt = {
             if (e.button === 0) {
                 const item = moveIt.getItemMouseOver(e);
                 const itemProperty = moveIt.getItemProperty(moveIt.getIdByItem(item));
-                if (item && itemProperty.swapGroup.length > 0) {
+                if (item && (!itemProperty.swapGroup || itemProperty.swapGroup.length > 0)) {
                     moveIt.holdItem(item);
-                    const shiftX = e.pageX - item.getBoundingClientRect().left;
-                    const shiftY = e.pageY - item.getBoundingClientRect().top;
-                    moveIt.switchItem(item, "held")
-                    mouseMove(e, shiftX, shiftY);
-                    moveIt.x = (e.pageX - shiftX);
-                    moveIt.y = (e.pageY - shiftY);
+                    const shiftX = moveIt.holdCenter ? moveIt.heldElement.offsetWidth / 2 : e.pageX - item.getBoundingClientRect().left;
+                    const shiftY = moveIt.holdCenter ? moveIt.heldElement.offsetHeight / 2 : e.pageY - item.getBoundingClientRect().top;
+                    moveIt.switchItem(item, "held");
+                    moveIt.x = e.pageX - shiftX;
+                    moveIt.y = e.pageY - shiftY;
                     moveIt.heldElement.style.left = moveIt.x + "px";
                     moveIt.heldElement.style.top = moveIt.y + "px";
                     const mouseListener = (e) => mouseMove(e, shiftX, shiftY);
@@ -281,9 +279,6 @@ const moveIt = {
         }
     },
     switchItem: (item, type) => {
-        const appendStyle = (element, newStyle) => {
-            return element.getAttribute('style') + (newStyle || '');
-        }
         if (type === "held") {
             const itemProperty = moveIt.getItemProperty(moveIt.heldId);
             const replaceElement = (itemProperty.elementWhenHeld || moveIt.elementWhenHeld) || item;
@@ -291,7 +286,7 @@ const moveIt = {
             moveIt.heldElementClass = item.cloneNode(true).className;
             replaceElement.setAttribute("moveit-id", moveIt.heldId);
             replaceElement.setAttribute("moveit-item", undefined);
-            replaceElement.setAttribute("style", appendStyle(replaceElement, (itemProperty.elementWhenHeldStyle || moveIt.elementWhenHeldStyle)));
+            replaceElement.setAttribute("style", itemProperty.elementWhenHeldStyle || moveIt.elementWhenHeldStyle);
             item.outerHTML = replaceElement.outerHTML;
         } else if (type === "hover") {
             const itemProperty = moveIt.getItemProperty(moveIt.hoverId);
@@ -300,7 +295,7 @@ const moveIt = {
             moveIt.hoverElementClass = item.cloneNode(true).className;
             replaceElement.setAttribute("moveit-id", moveIt.hoverId);
             replaceElement.setAttribute("moveit-item", undefined);
-            replaceElement.setAttribute("style", appendStyle(replaceElement, (itemProperty.elementHoverStyle || moveIt.elementHoverStyle)));
+            replaceElement.setAttribute("style", itemProperty.elementHoverStyle || moveIt.elementHoverStyle);
             item.outerHTML = replaceElement.outerHTML;
         }
     },
