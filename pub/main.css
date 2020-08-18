@@ -1,0 +1,73 @@
+h1 {
+    font-family: Quicksand;
+    margin: 0px;
+    font-size: 64pt;
+    font-weight: 600;
+    position: fixed;
+    left: 50%;
+    top: 20%;
+    transform: translate(-50%, -20%);
+}
+
+h1 > .dark-blue {
+    color: #225CAD;
+}
+
+#content {
+    position: fixed;
+    width: 70%;
+    min-width: 600px;
+    left: 50%;
+    bottom: 30%;
+    transform: translate(-50%, 30%);
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.cup-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+}
+
+.cup {
+    position: absolute;
+    left: 50%;
+    bottom: 0px;
+    transform: translate(-50%, 0px);
+    z-index: 1;
+    height: 240px;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-drag: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+}
+
+.button {
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-drag: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+}
+
+.button > img {
+    display: block;
+    padding: 10px;
+    height: 50px;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-drag: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+}
+
+.github {
+    position: fixed;
+    right: 10px;
+    top: 6px;
+}
