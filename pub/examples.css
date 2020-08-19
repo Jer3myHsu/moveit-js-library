@@ -1,15 +1,29 @@
+@keyframes spin {
+    0%  {transform: rotate(0deg);}
+    100% {transform: rotate(360deg);}   
+}
+
 .row {
+    height: 100%;
     display: flex;
     flex-direction: row;
-    align-items: flex-start;
+    align-items: stretch;
+}
+
+h1, h2, h3 {
+    margin-top: 10px;
+    margin-bottom: 4px;
 }
 
 .menu {
+    position: absolute;
+    top: 60px;
+    left: 2%;
     display: flex;
     flex-direction: column;
-    min-width: 160px;
-    background-color: #F0F0F0;
+    min-width: 172px;
     border-radius: 14px;
+    background-color: #F0F0F0;
 }
 
 .menu > a {
@@ -29,34 +43,24 @@
 }
 
 .example {
+    display: flex;
+    flex-direction: column;
     flex-grow: 1;
-    padding: 10px;
+    padding: 10px 20px;
 }
 
 #box {
-    flex-grow: 1;
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
     justify-content: space-around;
-    /*border: solid 2px wheat;
-    background-color: antiquewhite;*/
     border-radius: 20px;
     padding: 20px;
-    margin-bottom: 10px;
 }
 
-.redBall, .blueBall {
-    width: 100px;
+#box > .action {
+    width: 200px;
     height: 100px;
-    border-radius: 50%;
-}
-
-.redBall {
-    background-color: red;
-}
-
-.blueBall {
-    background-color: blue;
 }
 
 .radio {
@@ -72,4 +76,56 @@
 .radio > img {
     margin-right: 10px;
     height: 12px;
+}
+
+pre {
+    padding: 20px;
+    border-radius: 14px;
+    background-color: #F0F0F0;
+}
+
+.picture {
+    background-image: url("res/placeholder.png");
+    background-position: center;
+    width: 180px;
+    height: 120px;
+    padding: 10px;
+    border: solid 2px black;
+    font-size: 24pt;
+    border-radius: 6px;
+}
+
+.card {
+    background-color: white;
+    width: 120px;
+    height: 80px;
+    padding: 10px;
+    border: solid 1px gainsboro;
+    box-shadow: 2px 2px 4px gray;
+    font-size: 32pt;
+    text-align: center;
+    border-radius: 10px;
+}
+
+.card-2 {
+    background-color: gainsboro;
+    width: 160px;
+    height: 120px;
+    border: outset 10px;
+    text-align: center;
+}
+
+.ball {
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+}
+
+.ball > img, .card > img, .card-2 > img {
+    height: 100%;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-drag: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
 }

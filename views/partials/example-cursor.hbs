@@ -1,0 +1,39 @@
+<h2>Held Item Cursor</h2>
+<p>
+    Here are some examples of different cursors you can use. Try dragging!
+</p>
+<div id="box">
+    <div moveit-item class="card">
+        <img src="res/male.png">
+    </div>
+    <div moveit-item class="card">
+        <img src="res/female.png">
+    </div>
+</div>
+<h3>Cursor</h3>
+<label>
+    <input type="radio"name="cursor" value="default" onclick="radioClick(this)" checked>
+    Default
+</label>
+<label>
+    <input type="radio" name="cursor" value="pointer" onclick="radioClick(this)">
+    Pointer
+</label>
+<label>
+    <input type="radio" name="cursor" value="move" onclick="radioClick(this)">
+    Move
+</label>
+<label>
+    <input type="radio" name="cursor" value="grabbing" onclick="radioClick(this)">
+    Grabbing
+</label>
+<label>
+    <input type="radio" name="cursor" value="crosshair" onclick="radioClick(this)">
+    Crosshair
+</label>
+<span>For a complete list of possible cursors <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/cursor">click here</a></span>
+<div class="example">
+    <h3>JavaScript</h3>
+    <pre>
+moveIt.holdCursor = 'default';</pre>
+</div>

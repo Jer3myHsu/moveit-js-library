@@ -54,13 +54,15 @@ const moveIt = {
         function mouseMove(e, shiftX, shiftY) {
             if (moveIt.heldElement) {
                 const move = (posX, posY, weight) => {
+                    posX -= document.scrollingElement.scrollLeft;
+                    posY -= document.scrollingElement.scrollTop;
                     moveIt.x = ((weight - 1) * moveIt.x + posX) / weight;
                     moveIt.y = ((weight - 1) * moveIt.y + posY) / weight;
                     moveIt.heldElement.style.left = moveIt.x + "px";
                     moveIt.heldElement.style.top = moveIt.y + "px";
                 };
                 const item = moveIt.getItemMouseOver(e);
-                if (item && typeof moveIt.hoverId !== "number") {
+                if (item && typeof moveIt.hoverId !== "number" && moveIt.canDragWith(moveIt.heldId, moveIt.getIdByItem(item))) {
                     moveIt.hoverId = moveIt.getIdByItem(item);
                     moveIt.switchItem(item, "hover");
                 } else if (!item && typeof moveIt.hoverId === "number") {
@@ -71,7 +73,7 @@ const moveIt = {
                 if (weight > 2) {
                     clearInterval(moveIt.timer);
                     moveIt.timer = setInterval(() => {
-                        if (moveIt.heldElement && Math.abs(moveIt.x - e.pageX + shiftX) > 0.1 && Math.abs(moveIt.y - e.pageY + shiftY) > 0.1) {
+                        if (moveIt.heldElement && Math.abs(moveIt.x - e.pageX + shiftX) > 0.2 && Math.abs(moveIt.y - e.pageY + shiftY) > 0.2) {
                             move(e.pageX - shiftX, e.pageY - shiftY, weight);
                         } else {
                             clearInterval(moveIt.timer);
@@ -91,11 +93,11 @@ const moveIt = {
                 const itemProperty = moveIt.getItemProperty(moveIt.getIdByItem(item));
                 if (item && (!itemProperty.swapGroup || itemProperty.swapGroup.length > 0)) {
                     moveIt.holdItem(item);
-                    const shiftX = moveIt.holdCenter ? moveIt.heldElement.offsetWidth / 2 : e.pageX - item.getBoundingClientRect().left;
-                    const shiftY = moveIt.holdCenter ? moveIt.heldElement.offsetHeight / 2 : e.pageY - item.getBoundingClientRect().top;
+                    let shiftX = moveIt.holdCenter ? moveIt.heldElement.offsetWidth / 2 : e.pageX - item.getBoundingClientRect().left - document.scrollingElement.scrollLeft;
+                    let shiftY = moveIt.holdCenter ? moveIt.heldElement.offsetHeight / 2 : e.pageY - item.getBoundingClientRect().top - document.scrollingElement.scrollTop;
                     moveIt.switchItem(item, "held");
-                    moveIt.x = e.pageX - shiftX;
-                    moveIt.y = e.pageY - shiftY;
+                    moveIt.x = e.pageX - shiftX - (moveIt.holdCenter ? document.scrollingElement.scrollLeft : 0);
+                    moveIt.y = e.pageY - shiftY - (moveIt.holdCenter ? document.scrollingElement.scrollTop : 0);
                     moveIt.heldElement.style.left = moveIt.x + "px";
                     moveIt.heldElement.style.top = moveIt.y + "px";
                     const mouseListener = (e) => mouseMove(e, shiftX, shiftY);
@@ -106,9 +108,9 @@ const moveIt = {
                         moveIt.restoreItem("held");
                         const releasedItem = moveIt.getItemById(releasedItemId);
                         const itemOver = moveIt.getItemMouseOver(e);
+                        const itemOverId = moveIt.getIdByItem(itemOver)
                         typeof moveIt.onRelease === "function" && moveIt.onRelease(releasedItem, itemOver);
-                        if (releasedItem && itemOver && moveIt.canDragWith(releasedItemId,
-                            moveIt.getIdByItem(itemOver))) {
+                        if (releasedItem && itemOver && releasedItemId !== itemOverId && moveIt.canDragWith(releasedItemId, itemOverId)) {
                             typeof moveIt.onSwap === "function" && moveIt.onSwap(releasedItem, itemOver);
                             moveIt.swap(releasedItem, itemOver);
                         }
@@ -183,7 +185,7 @@ const moveIt = {
             if(destIdArr === undefined) {
                 moveIt.getItemProperty(srcId).swapGroup = undefined;
             } else {
-                moveIt.getItemProperty(srcId).swapGroup = destIdArr;
+                moveIt.getItemProperty(srcId).swapGroup = JSON.parse(JSON.stringify(destIdArr));
                 moveIt.getItemProperty(srcId).swapGroup.sort((a, b) => a - b);
             }
         });
@@ -247,24 +249,21 @@ const moveIt = {
         moveIt.heldElement.innerHTML = ((itemProperty.elementHeld || moveIt.elementHeld) || item).outerHTML;
         moveIt.heldElement.setAttribute("style", itemProperty.elementHeldStyle || moveIt.elementHeldStyle);
         moveIt.heldElement.setAttribute("body-cursor", document.body.style.cursor);
-        moveIt.heldElement.setAttribute("body-overflow", document.body.style.overflow);
         moveIt.heldElement.setAttribute("body-user-select", document.body.style.userSelect);
         moveIt.heldElement.setAttribute("moveit-id", moveIt.heldId);
         moveIt.heldElement.style.position = "fixed";
         moveIt.heldElement.style.zIndex = Number.MAX_SAFE_INTEGER;
         moveIt.heldElement.style.pointerEvents = "none";
-        itemProperty.onHold ? itemProperty.onHold(moveIt.heldElement) : (moveIt.onHold && moveIt.onHold(moveIt.heldElement));
         document.body.style.cursor = (itemProperty.holdCursor || moveIt.holdCursor) || document.body.style.cursor;
-        document.body.style.overflow = "hidden";
         document.body.style.userSelect = "none";
+        itemProperty.onHold ? itemProperty.onHold(moveIt.heldElement) : (moveIt.onHold && moveIt.onHold(moveIt.heldElement));
         document.body.appendChild(moveIt.heldElement);
     },
     releaseItem: () => {
         if (moveIt.heldElement) {
             moveIt.heldElement.style.visibility = "hidden";
             document.body.removeChild(moveIt.heldElement);
-            document.body.style.overflow = moveIt.heldElement.getAttribute("body-cursor");
-            document.body.style.cursor = moveIt.heldElement.getAttribute("body-overflow");
+            document.body.style.cursor = moveIt.heldElement.getAttribute("body-cursor");
             document.body.style.userSelect = moveIt.heldElement.getAttribute("body-user-select");
             moveIt.heldElement = null;
             return moveIt.heldId;
@@ -286,7 +285,9 @@ const moveIt = {
             moveIt.heldElementClass = item.cloneNode(true).className;
             replaceElement.setAttribute("moveit-id", moveIt.heldId);
             replaceElement.setAttribute("moveit-item", undefined);
-            replaceElement.setAttribute("style", itemProperty.elementWhenHeldStyle || moveIt.elementWhenHeldStyle);
+            if (itemProperty.elementWhenHeldStyle || moveIt.elementWhenHeldStyle) {
+                replaceElement.setAttribute("style", itemProperty.elementWhenHeldStyle || moveIt.elementWhenHeldStyle);
+            }
             item.outerHTML = replaceElement.outerHTML;
         } else if (type === "hover") {
             const itemProperty = moveIt.getItemProperty(moveIt.hoverId);
@@ -295,7 +296,9 @@ const moveIt = {
             moveIt.hoverElementClass = item.cloneNode(true).className;
             replaceElement.setAttribute("moveit-id", moveIt.hoverId);
             replaceElement.setAttribute("moveit-item", undefined);
-            replaceElement.setAttribute("style", itemProperty.elementHoverStyle || moveIt.elementHoverStyle);
+            if (itemProperty.elementHoverStyle || moveIt.elementHoverStyle) {
+                replaceElement.setAttribute("style", itemProperty.elementHoverStyle || moveIt.elementHoverStyle);
+            }
             item.outerHTML = replaceElement.outerHTML;
         }
     },
