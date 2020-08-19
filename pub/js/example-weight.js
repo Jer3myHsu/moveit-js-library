@@ -1,11 +1,11 @@
 "user strict";
 
-moveIt.initializeMoveIt("box");
+MoveIt.initializeMoveIt("box");
 
-moveIt.onHold = (item) => {
+MoveIt.onHold = (item) => {
     const value = parseFloat(document.querySelector(".input").value);
     if (value !== NaN) {
-        moveIt.dragWeight = value;
-        document.querySelector("pre").innerText = "moveIt.dragWeight = " + value + ";"
+        MoveIt.dragWeight = value;
+        document.querySelector("pre").innerText = "MoveIt.dragWeight = " + value + ";"
     }
 }

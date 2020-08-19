@@ -15,7 +15,7 @@
     <h3>JavaScript</h3>
     <pre>
 // Make sure cursor is at the center of the held item
-moveIt.holdCenter = true;
+MoveIt.holdCenter = true;
 
 
 // Create elements to use
@@ -28,8 +28,8 @@ held.style.borderRadius = "50%";
 const hover = document.createElement("div");
 hover.style.height = "208px";
 hover.style.width = "268px";
-
 hover.style.backgroundColor = "blue";
+
 const whenHeld = document.createElement("div");
 whenHeld.style.height = "208px";
 whenHeld.style.width = "268px";
@@ -37,9 +37,9 @@ whenHeld.style.backgroundColor = "red";
 
 
 // Apply elements for all items
-moveIt.elementHeld = held;
-moveIt.elementHover = hover;
-moveIt.elementWhenHeld = whenHeld;
+MoveIt.elementHeld = held;
+MoveIt.elementHover = hover;
+MoveIt.elementWhenHeld = whenHeld;
     </pre>
 </div>
 <b>Warning</b>
@@ -70,7 +70,7 @@ moveIt.elementWhenHeld = whenHeld;
     <div class="example">
         <h3>JavaScript</h3>
         <pre>
-moveIt.itemProperty.forEach(itemProp => {
+MoveIt.itemProperty.forEach(itemProp => {
     // id of soccerball item
     if (itemProp.id === 3) {
         itemProp.elementHeldStyle = "animation: spin 0.5s infinite linear;";

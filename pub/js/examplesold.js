@@ -2,15 +2,15 @@
 
 const log = console.log;
 
-moveIt.initializeMoveIt("content");
+MoveIt.initializeMoveIt("content");
 
 // Records can only be dragged to the empty record and delete
-moveIt.setDraggableWith(undefined, [moveIt.getIdByItem(document.querySelector(".empty-record"))]);
-moveIt.setDraggableWith([0, moveIt.getIdByItem(document.querySelector("#delete-button"))], []);
+MoveIt.setDraggableWith(undefined, [MoveIt.getIdByItem(document.querySelector(".empty-record"))]);
+MoveIt.setDraggableWith([0, MoveIt.getIdByItem(document.querySelector("#delete-button"))], []);
 
 const placeholder = document.querySelector(".empty-record").cloneNode(true);
-placeholder.removeAttribute("moveit-item");
-placeholder.removeAttribute("moveit-id");
+placeholder.removeAttribute("MoveIt-item");
+placeholder.removeAttribute("MoveIt-id");
 
 function setTurntable(record, text) {
     record.nextElementSibling.innerText = text || "No Song Playing";
@@ -18,17 +18,17 @@ function setTurntable(record, text) {
 }
 
 function onRecordClick(event) {
-    const recordPlaying = moveIt.getItems()[0];
-    const isPlaying = moveIt.getIdByItem(recordPlaying);
+    const recordPlaying = MoveIt.getItems()[0];
+    const isPlaying = MoveIt.getIdByItem(recordPlaying);
     // Swap if record is playing or nothing is playing
     if (recordPlaying === event || !isPlaying) {
-        const emptyRecord = moveIt.getItemById(0);
+        const emptyRecord = MoveIt.getItemById(0);
         if (isPlaying) {
             setTurntable(recordPlaying);
         } else {
             setTurntable(emptyRecord, event.nextElementSibling.firstElementChild.innerText);
         }
-        moveIt.swap(event, emptyRecord);
+        MoveIt.swap(event, emptyRecord);
     }
 }
 
@@ -41,10 +41,10 @@ function onRecordHold(record) {
 function onRecordRelease(heldRecord, element) {
     const deleteButton = document.querySelector("#delete-button");
     const empty = document.querySelector(".empty-record");
-    if (empty !== moveIt.getItems()[0]) {
+    if (empty !== MoveIt.getItems()[0]) {
         onRecordSwap(heldRecord, empty);
-        moveIt.swap(heldRecord, empty);
-        heldRecord = moveIt.getItemById(moveIt.getIdByItem(heldRecord))
+        MoveIt.swap(heldRecord, empty);
+        heldRecord = MoveIt.getItemById(MoveIt.getIdByItem(heldRecord))
     }
     if (deleteButton === element) {
         heldRecord.parentElement.parentElement.removeChild(heldRecord.parentElement);
@@ -55,7 +55,7 @@ function onRecordRelease(heldRecord, element) {
 
 function onRecordSwap(heldRecord, emptyRecord) {
     // Since we set disabled empty records from being draggable, we know the heldRecord is never the empty record
-    const recordPlaying = moveIt.getItems()[0];
+    const recordPlaying = MoveIt.getItems()[0];
     // Swap if record is playing
     if (recordPlaying !== emptyRecord) {
         setTurntable(heldRecord);
@@ -64,10 +64,10 @@ function onRecordSwap(heldRecord, emptyRecord) {
     }
 }
 
-moveIt.elementHeldStyle = "opacity: 0.8;";
-moveIt.elementWhenHeld = placeholder;
-moveIt.onHold = onRecordHold;
-moveIt.onRelease = onRecordRelease;
-moveIt.onSwap = onRecordSwap;
-moveIt.dragWeight = 3;
-moveIt.holdCenter = false;
+MoveIt.elementHeldStyle = "opacity: 0.8;";
+MoveIt.elementWhenHeld = placeholder;
+MoveIt.onHold = onRecordHold;
+MoveIt.onRelease = onRecordRelease;
+MoveIt.onSwap = onRecordSwap;
+MoveIt.dragWeight = 3;
+MoveIt.holdCenter = false;

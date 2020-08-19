@@ -1,20 +1,20 @@
 "use strict";
 
-moveIt.initializeMoveIt("content");
+MoveIt.initializeMoveIt("content");
 
-moveIt.setDraggableWith([0], []);
-moveIt.setDraggableWith([1, 2], [0]);
+MoveIt.setDraggableWith([0], []);
+MoveIt.setDraggableWith([1, 2], [0]);
 
 
-moveIt.elementWhenHeldStyle = "visibility: hidden;";
+MoveIt.elementWhenHeldStyle = "visibility: hidden;";
 
-moveIt.itemProperty.forEach(prop => {
+MoveIt.itemProperty.forEach(prop => {
     if (!prop.id) prop.elementHoverStyle = "opacity: 0.5; z-index: 1;";
-    const element = moveIt.getItemById(prop.id).cloneNode(true);
+    const element = MoveIt.getItemById(prop.id).cloneNode(true);
     element.style.position = "static";
     element.style.left = "0px";
     element.style.transform = "none";
     prop.elementHeld = element;
 });
-moveIt.elementHeldStyle = "transition: transform ease-in-out 0.2s; transform: rotate(25deg);";
-moveIt.dragWeight = 1;
+MoveIt.elementHeldStyle = "transition: transform ease-in-out 0.2s; transform: rotate(25deg);";
+MoveIt.dragWeight = 1;

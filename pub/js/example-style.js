@@ -1,12 +1,12 @@
 "user strict";
 
-moveIt.initializeMoveIt("box");
+MoveIt.initializeMoveIt("box");
 
-moveIt.setDraggableWith([0,1], [0,1]);
+MoveIt.setDraggableWith([0,1], [0,1]);
 
-moveIt.setDraggableWith([2,3,4], [2,3,4]);
+MoveIt.setDraggableWith([2,3,4], [2,3,4]);
 
-moveIt.itemProperty.forEach(itemProp => {
+MoveIt.itemProperty.forEach(itemProp => {
     if (itemProp.id <= 1) {
         const held = document.createElement("div");
         held.style.height = "60px";
@@ -25,18 +25,18 @@ moveIt.itemProperty.forEach(itemProp => {
         whenHeld.style.backgroundColor = "red";
         itemProp.elementWhenHeld = whenHeld;
         itemProp.onHold = (element) => {
-            moveIt.holdCenter = true;
+            MoveIt.holdCenter = true;
         }
     } else if (itemProp.id === 3) {
         itemProp.elementHeldStyle = "animation: spin 0.5s infinite linear;";
         itemProp.elementWhenHeldStyle = "visibility: hidden;";
         itemProp.onHold = (element) => {
-            moveIt.holdCenter = false;
+            MoveIt.holdCenter = false;
         }
     } else {
         itemProp.elementHoverStyle = "opacity: 0.5";
         itemProp.onHold = (element) => {
-            moveIt.holdCenter = false;
+            MoveIt.holdCenter = false;
         }
     }
 });

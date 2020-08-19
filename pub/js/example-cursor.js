@@ -1,8 +1,8 @@
 "user strict";
 
-moveIt.initializeMoveIt("box");
+MoveIt.initializeMoveIt("box");
 
 function radioClick(e) {
-    moveIt.holdCursor = e.value;
-    document.querySelector("pre").innerText = "moveIt.holdCursor = '" + e.value + "';"
+    MoveIt.holdCursor = e.value;
+    document.querySelector("pre").innerText = "MoveIt.holdCursor = '" + e.value + "';"
 }
