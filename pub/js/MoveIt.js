@@ -3,16 +3,6 @@
 const moveIt = {
     id: undefined,
     itemProperty: [],
-    heldId: undefined,
-    heldElement: undefined,
-    heldElementHTML: undefined,
-    heldElementClass: undefined,
-    hoverId: undefined,
-    hoverElementHTML: undefined,
-    hoverElementClass: undefined,
-    x: 0,
-    y: 0,
-    timer: undefined,
 
     holdCursor: undefined,
     elementHeld: undefined,
@@ -27,6 +17,16 @@ const moveIt = {
     onRelease: undefined,
     onSwap: undefined,
     initializeMoveIt: (id) => {
+        let heldId = undefined;
+        let heldElement = undefined;
+        let heldElementHTML = undefined;
+        let heldElementClass = undefined;
+        let hoverId = undefined;
+        let hoverElementHTML = undefined;
+        let hoverElementClass = undefined;
+        let elementX = 0;
+        let elementY = 0;
+        let timer = undefined;
         function initializeId(items) {
             for (let i = 0; i < items.length; i++) {
                 items[i].setAttribute("moveit-id", i);
@@ -51,32 +51,109 @@ const moveIt = {
             }));
             return itemProperty;
         }
+        function holdItem(item) {
+            heldId = moveIt.getIdByItem(item);
+            const itemProperty = moveIt.getItemProperty(heldId);
+            heldElement = document.createElement("div");
+            heldElement.innerHTML = ((itemProperty.elementHeld || moveIt.elementHeld) || item).outerHTML;
+            heldElement.setAttribute("style", itemProperty.elementHeldStyle || moveIt.elementHeldStyle);
+            heldElement.setAttribute("body-cursor", document.body.style.cursor);
+            heldElement.setAttribute("body-user-select", document.body.style.userSelect);
+            heldElement.setAttribute("moveit-id", heldId);
+            heldElement.style.position = "fixed";
+            heldElement.style.zIndex = Number.MAX_SAFE_INTEGER;
+            heldElement.style.pointerEvents = "none";
+            document.body.style.cursor = (itemProperty.holdCursor || moveIt.holdCursor) || document.body.style.cursor;
+            document.body.style.userSelect = "none";
+            itemProperty.onHold ? itemProperty.onHold(heldElement) : (moveIt.onHold && moveIt.onHold(heldElement));
+            document.body.appendChild(heldElement);
+        }
+        function releaseItem() {
+            if (heldElement) {
+                heldElement.style.visibility = "hidden";
+                document.body.removeChild(heldElement);
+                document.body.style.cursor = heldElement.getAttribute("body-cursor");
+                document.body.style.userSelect = heldElement.getAttribute("body-user-select");
+                heldElement = null;
+                return heldId;
+            }
+        }
+        function getItemMouseOver(e) {
+            for (let i = 0; i < e.path.length - 2; i++) {
+                const attributes = e.path[i].getAttributeNames();
+                if (attributes && attributes.includes("moveit-item") && moveIt.getIdByItem(e.path[i]) !== heldId) {
+                    return e.path[i];
+                }
+            }
+        }
+        function switchItem(item, type) {
+            if (type === "held") {
+                const itemProperty = moveIt.getItemProperty(heldId);
+                const replaceElement = (itemProperty.elementWhenHeld || moveIt.elementWhenHeld) || item;
+                heldElementHTML = item.outerHTML;
+                heldElementClass = item.cloneNode(true).className;
+                replaceElement.setAttribute("moveit-id", heldId);
+                replaceElement.setAttribute("moveit-item", undefined);
+                if (itemProperty.elementWhenHeldStyle || moveIt.elementWhenHeldStyle) {
+                    replaceElement.setAttribute("style", itemProperty.elementWhenHeldStyle || moveIt.elementWhenHeldStyle);
+                }
+                item.outerHTML = replaceElement.outerHTML;
+            } else if (type === "hover") {
+                const itemProperty = moveIt.getItemProperty(hoverId);
+                const replaceElement = (itemProperty.elementHover || moveIt.elementHover) || item;
+                hoverElementHTML = item.outerHTML;
+                hoverElementClass = item.cloneNode(true).className;
+                replaceElement.setAttribute("moveit-id", hoverId);
+                replaceElement.setAttribute("moveit-item", undefined);
+                if (itemProperty.elementHoverStyle || moveIt.elementHoverStyle) {
+                    replaceElement.setAttribute("style", itemProperty.elementHoverStyle || moveIt.elementHoverStyle);
+                }
+                item.outerHTML = replaceElement.outerHTML;
+            }
+        }
+        function restoreItem(type) {
+            if (type === "held" && typeof heldId === "number") {
+                const item = moveIt.getItemById(heldId);
+                item.className = heldElementClass;
+                item.outerHTML = heldElementHTML;
+                heldId = undefined;
+                heldElementClass = undefined;
+                heldElementHTML = undefined;
+            } else if (type === "hover" && typeof hoverId === "number") {
+                const item = moveIt.getItemById(hoverId);
+                item.className = hoverElementClass;
+                item.outerHTML = hoverElementHTML;
+                hoverId = undefined;
+                hoverElementClass = undefined;
+                hoverElementHTML = undefined;
+            }
+        }
         function mouseMove(e, shiftX, shiftY) {
-            if (moveIt.heldElement) {
+            if (heldElement) {
                 const move = (posX, posY, weight) => {
                     posX -= document.scrollingElement.scrollLeft;
                     posY -= document.scrollingElement.scrollTop;
-                    moveIt.x = ((weight - 1) * moveIt.x + posX) / weight;
-                    moveIt.y = ((weight - 1) * moveIt.y + posY) / weight;
-                    moveIt.heldElement.style.left = moveIt.x + "px";
-                    moveIt.heldElement.style.top = moveIt.y + "px";
+                    elementX = ((weight - 1) * elementX + posX) / weight;
+                    elementY = ((weight - 1) * elementY + posY) / weight;
+                    heldElement.style.left = elementX + "px";
+                    heldElement.style.top = elementY + "px";
                 };
-                const item = moveIt.getItemMouseOver(e);
-                if (item && typeof moveIt.hoverId !== "number" && moveIt.canDragWith(moveIt.heldId, moveIt.getIdByItem(item))) {
-                    moveIt.hoverId = moveIt.getIdByItem(item);
-                    moveIt.switchItem(item, "hover");
-                } else if (!item && typeof moveIt.hoverId === "number") {
-                    moveIt.restoreItem("hover");
+                const item = getItemMouseOver(e);
+                if (item && typeof hoverId !== "number" && moveIt.canDragWith(heldId, moveIt.getIdByItem(item))) {
+                    hoverId = moveIt.getIdByItem(item);
+                    switchItem(item, "hover");
+                } else if (!item && typeof hoverId === "number") {
+                    restoreItem("hover");
                 }
                 const weight = Math.max(moveIt.dragWeight * 5, 1);
                 // If using interval with a low weight will lag 
                 if (weight > 2) {
-                    clearInterval(moveIt.timer);
-                    moveIt.timer = setInterval(() => {
-                        if (moveIt.heldElement && Math.abs(moveIt.x - e.pageX + shiftX) > 0.2 && Math.abs(moveIt.y - e.pageY + shiftY) > 0.2) {
+                    clearInterval(timer);
+                    timer = setInterval(() => {
+                        if (heldElement && Math.abs(elementX - e.pageX + shiftX) > 0.2 && Math.abs(elementY - e.pageY + shiftY) > 0.2) {
                             move(e.pageX - shiftX, e.pageY - shiftY, weight);
                         } else {
-                            clearInterval(moveIt.timer);
+                            clearInterval(timer);
                         }
                     },5);
                 } else {
@@ -89,32 +166,32 @@ const moveIt = {
         initializeId(moveIt.getItems());
         window.addEventListener("mousedown", function(e)  {
             if (e.button === 0) {
-                const item = moveIt.getItemMouseOver(e);
+                const item = getItemMouseOver(e);
                 const itemProperty = moveIt.getItemProperty(moveIt.getIdByItem(item));
                 if (item && (!itemProperty.swapGroup || itemProperty.swapGroup.length > 0)) {
-                    moveIt.holdItem(item);
-                    let shiftX = moveIt.holdCenter ? moveIt.heldElement.offsetWidth / 2 : e.pageX - item.getBoundingClientRect().left - document.scrollingElement.scrollLeft;
-                    let shiftY = moveIt.holdCenter ? moveIt.heldElement.offsetHeight / 2 : e.pageY - item.getBoundingClientRect().top - document.scrollingElement.scrollTop;
-                    moveIt.switchItem(item, "held");
-                    moveIt.x = e.pageX - shiftX - (moveIt.holdCenter ? document.scrollingElement.scrollLeft : 0);
-                    moveIt.y = e.pageY - shiftY - (moveIt.holdCenter ? document.scrollingElement.scrollTop : 0);
-                    moveIt.heldElement.style.left = moveIt.x + "px";
-                    moveIt.heldElement.style.top = moveIt.y + "px";
+                    holdItem(item);
+                    let shiftX = moveIt.holdCenter ? heldElement.offsetWidth / 2 : e.pageX - item.getBoundingClientRect().left - document.scrollingElement.scrollLeft;
+                    let shiftY = moveIt.holdCenter ? heldElement.offsetHeight / 2 : e.pageY - item.getBoundingClientRect().top - document.scrollingElement.scrollTop;
+                    switchItem(item, "held");
+                    elementX = e.pageX - shiftX - (moveIt.holdCenter ? document.scrollingElement.scrollLeft : 0);
+                    elementY = e.pageY - shiftY - (moveIt.holdCenter ? document.scrollingElement.scrollTop : 0);
+                    heldElement.style.left = elementX + "px";
+                    heldElement.style.top = elementY + "px";
                     const mouseListener = (e) => mouseMove(e, shiftX, shiftY);
                     window.addEventListener("mousemove", mouseListener);
                     window.addEventListener("mouseup", function(e) {
                         window.removeEventListener("mousemove", mouseListener);
-                        const releasedItemId = moveIt.releaseItem();
-                        moveIt.restoreItem("held");
+                        const releasedItemId = releaseItem();
+                        restoreItem("held");
                         const releasedItem = moveIt.getItemById(releasedItemId);
-                        const itemOver = moveIt.getItemMouseOver(e);
+                        const itemOver = getItemMouseOver(e);
                         const itemOverId = moveIt.getIdByItem(itemOver)
                         typeof moveIt.onRelease === "function" && moveIt.onRelease(releasedItem, itemOver);
                         if (releasedItem && itemOver && releasedItemId !== itemOverId && moveIt.canDragWith(releasedItemId, itemOverId)) {
                             typeof moveIt.onSwap === "function" && moveIt.onSwap(releasedItem, itemOver);
                             moveIt.swap(releasedItem, itemOver);
                         }
-                        moveIt.restoreItem("hover");//Must restore at the end since losing parent will cause swap issue
+                        restoreItem("hover");//Must restore at the end since losing parent will cause swap issue
                     }, {once: true});
                 }
             }
@@ -240,83 +317,6 @@ const moveIt = {
             const two = itemTwo.cloneNode(true);
             itemTwo.parentElement.replaceChild(one, itemTwo);
             itemOne.parentElement.replaceChild(two, itemOne);
-        }
-    },
-    holdItem: (item) => {
-        moveIt.heldId = moveIt.getIdByItem(item);
-        const itemProperty = moveIt.getItemProperty(moveIt.heldId);
-        moveIt.heldElement = document.createElement("div");
-        moveIt.heldElement.innerHTML = ((itemProperty.elementHeld || moveIt.elementHeld) || item).outerHTML;
-        moveIt.heldElement.setAttribute("style", itemProperty.elementHeldStyle || moveIt.elementHeldStyle);
-        moveIt.heldElement.setAttribute("body-cursor", document.body.style.cursor);
-        moveIt.heldElement.setAttribute("body-user-select", document.body.style.userSelect);
-        moveIt.heldElement.setAttribute("moveit-id", moveIt.heldId);
-        moveIt.heldElement.style.position = "fixed";
-        moveIt.heldElement.style.zIndex = Number.MAX_SAFE_INTEGER;
-        moveIt.heldElement.style.pointerEvents = "none";
-        document.body.style.cursor = (itemProperty.holdCursor || moveIt.holdCursor) || document.body.style.cursor;
-        document.body.style.userSelect = "none";
-        itemProperty.onHold ? itemProperty.onHold(moveIt.heldElement) : (moveIt.onHold && moveIt.onHold(moveIt.heldElement));
-        document.body.appendChild(moveIt.heldElement);
-    },
-    releaseItem: () => {
-        if (moveIt.heldElement) {
-            moveIt.heldElement.style.visibility = "hidden";
-            document.body.removeChild(moveIt.heldElement);
-            document.body.style.cursor = moveIt.heldElement.getAttribute("body-cursor");
-            document.body.style.userSelect = moveIt.heldElement.getAttribute("body-user-select");
-            moveIt.heldElement = null;
-            return moveIt.heldId;
-        }
-    },
-    getItemMouseOver: (e) => {
-        for (let i = 0; i < e.path.length - 2; i++) {
-            const attributes = e.path[i].getAttributeNames();
-            if (attributes && attributes.includes("moveit-item") && moveIt.getIdByItem(e.path[i]) !== moveIt.heldId) {
-                return e.path[i];
-            }
-        }
-    },
-    switchItem: (item, type) => {
-        if (type === "held") {
-            const itemProperty = moveIt.getItemProperty(moveIt.heldId);
-            const replaceElement = (itemProperty.elementWhenHeld || moveIt.elementWhenHeld) || item;
-            moveIt.heldElementHTML = item.outerHTML;
-            moveIt.heldElementClass = item.cloneNode(true).className;
-            replaceElement.setAttribute("moveit-id", moveIt.heldId);
-            replaceElement.setAttribute("moveit-item", undefined);
-            if (itemProperty.elementWhenHeldStyle || moveIt.elementWhenHeldStyle) {
-                replaceElement.setAttribute("style", itemProperty.elementWhenHeldStyle || moveIt.elementWhenHeldStyle);
-            }
-            item.outerHTML = replaceElement.outerHTML;
-        } else if (type === "hover") {
-            const itemProperty = moveIt.getItemProperty(moveIt.hoverId);
-            const replaceElement = (itemProperty.elementHover || moveIt.elementHover) || item;
-            moveIt.hoverElementHTML = item.outerHTML;
-            moveIt.hoverElementClass = item.cloneNode(true).className;
-            replaceElement.setAttribute("moveit-id", moveIt.hoverId);
-            replaceElement.setAttribute("moveit-item", undefined);
-            if (itemProperty.elementHoverStyle || moveIt.elementHoverStyle) {
-                replaceElement.setAttribute("style", itemProperty.elementHoverStyle || moveIt.elementHoverStyle);
-            }
-            item.outerHTML = replaceElement.outerHTML;
-        }
-    },
-    restoreItem: (type) => {
-        if (type === "held" && typeof moveIt.heldId === "number") {
-            const item = moveIt.getItemById(moveIt.heldId);
-            item.className = moveIt.heldElementClass;
-            item.outerHTML = moveIt.heldElementHTML;
-            moveIt.heldId = undefined;
-            moveIt.heldElementClass = undefined;
-            moveIt.heldElementHTML = undefined;
-        } else if (type === "hover" && typeof moveIt.hoverId === "number") {
-            const item = moveIt.getItemById(moveIt.hoverId);
-            item.className = moveIt.hoverElementClass;
-            item.outerHTML = moveIt.hoverElementHTML;
-            moveIt.hoverId = undefined;
-            moveIt.hoverElementClass = undefined;
-            moveIt.hoverElementHTML = undefined;
         }
     }
 };

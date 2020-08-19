@@ -24,11 +24,19 @@ moveIt.itemProperty.forEach(itemProp => {
         whenHeld.style.width = "204px";
         whenHeld.style.backgroundColor = "red";
         itemProp.elementWhenHeld = whenHeld;
+        itemProp.onHold = (element) => {
+            moveIt.holdCenter = true;
+        }
     } else if (itemProp.id === 3) {
         itemProp.elementHeldStyle = "animation: spin 0.5s infinite linear;";
         itemProp.elementWhenHeldStyle = "visibility: hidden;";
+        itemProp.onHold = (element) => {
+            moveIt.holdCenter = false;
+        }
     } else {
         itemProp.elementHoverStyle = "opacity: 0.5";
+        itemProp.onHold = (element) => {
+            moveIt.holdCenter = false;
+        }
     }
 });
-moveIt.holdCenter = true;
