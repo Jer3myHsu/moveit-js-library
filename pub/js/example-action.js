@@ -1,6 +1,6 @@
 "user strict";
 
-MoveIt.initializeMoveIt("box");
+MoveIt.initializeMoveIt();
 
 const textField = document.querySelector(".action").lastElementChild;
 

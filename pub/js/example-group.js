@@ -1,4 +1,4 @@
-MoveIt.initializeMoveIt("box");
+MoveIt.initializeMoveIt();
 
 MoveIt.setDraggableWith([0,1,2,3,4,5], []);
 MoveIt.addDraggableWith([1,2,3,4,5], [0]);

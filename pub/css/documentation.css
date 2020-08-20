@@ -1,0 +1,55 @@
+.table {
+    display: table;
+    width: 100%;
+    background-color: whitesmoke;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.table > .header {
+    display: table-row;
+    background-color: #1e90ff80;
+    border-radius: 20px;
+}
+
+.table > .row {
+    display: table-row;
+    
+}
+
+.table > .row:nth-child(odd) {
+    background-color:#dcdcdc80;
+}
+
+.row > .cell, .header > .cell {
+    display: table-cell;
+    padding: 10px 20px;
+}
+
+.cell > .title {
+    display: block;
+    color: #225CAD;
+    font-weight: 600;
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+}
+
+#moveIt {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    padding: 20px 30px;
+}
+
+.rect {
+    font-size: 14pt;
+    background-color: white;
+    width: 120px;
+    height: 80px;
+    border: solid 2px black;
+    padding: 20px;
+}

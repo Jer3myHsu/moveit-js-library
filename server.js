@@ -29,17 +29,31 @@ app.get("/index", (req,res) => {
 });
 
 app.get("/examples", (req, res) => {
-	res.render(layoutDir + "/examples", {
-		layout: "index",
-		title: "MoveIt | Examples",
-		css: "examples.css",
-		header: true,
-		content: req.query.example
-	});
+	if (!req.query.page) {
+		res.redirect("examples?page=style");
+	} else {
+		res.render(layoutDir + "/examples", {
+			layout: "index",
+			title: "MoveIt | Examples",
+			css: "examples.css",
+			header: true,
+			content: req.query.page
+		});
+	}
 });
 
 app.get("/documentation", (req, res) => {
-	res.render(layoutDir + "/documentation", {layout: "index", title: "MoveIt | Examples", css: "documentation.css", header: true});
+	if (!req.query.page) {
+		res.redirect("documentation?page=overview");
+	} else {
+		res.render(layoutDir + "/documentation", {
+			layout: "index",
+			title: "MoveIt | Get Started",
+			css: "documentation.css",
+			header: true,
+			content: req.query.page
+		});
+	}
 });
 
 const port = process.env.PORT || 5000;

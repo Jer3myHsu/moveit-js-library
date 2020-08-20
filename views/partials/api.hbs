@@ -1,0 +1,337 @@
+<h1>API Reference</h1>
+<h2>Properties</h2>
+<div class="table">
+    <div class="header">
+        <div class="cell">Type</div>
+        <div class="cell">Default</div>
+        <div class="cell">Property</div>
+    </div>
+    <div class="row">
+        <div class="cell">string</div>
+        <div class="cell"><code>undefined</code></div>
+        <div class="cell">
+            <code class="title">id</code>
+            An id of element that will allow its children to be swapped. If set to <code>undefined</code>, then MoveIt will use the document body.
+        </div>
+    </div>
+    <div class="row">
+        <div class="cell">string</div>
+        <div class="cell"><code>undefined</code></div>
+        <div class="cell">
+            <code class="title">holdCursor</code>
+            A keyword of CSS cursor property that will be used when dragging. For a list of possible cursors <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/cursor">click here</a>. If set to <code>undefined</code>, then the current cursor will be used.
+        </div>
+    </div>
+    <div class="row">
+        <div class="cell">boolean</div>
+        <div class="cell"><code>false</code></div>
+        <div class="cell">
+            <code class="title">holdCenter</code>
+            Determines if item will be held in the center. If <code>false</code>, item will be held from where it was clicked.
+        </div>
+    </div>
+    <div class="row">
+        <div class="cell">number</div>
+        <div class="cell"><code>0</code></div>
+        <div class="cell">
+            <code class="title">dragWeight</code>
+            Determines how slow to drag item. The higher the value, the slower. Minimun value allowed is <code>0</code>.
+        </div>
+    </div>
+    <div class="row">
+        <div class="cell">HTMLElement</div>
+        <div class="cell"><code>undefined</code></div>
+        <div class="cell">
+            <code class="title">elementHeld</code>
+            Element that follows cursor when dragging. If set to <code>undefined</code>, then the item to be dragged will be used.
+        </div>
+    </div>
+    <div class="row">
+        <div class="cell">string</div>
+        <div class="cell"><code>undefined</code></div>
+        <div class="cell">
+            <code class="title">elementHeldStyle</code>
+            CSS style to be applied to the element that follows cursor when dragging.
+        </div>
+    </div>
+    <div class="row">
+        <div class="cell">HTMLElement</div>
+        <div class="cell"><code>undefined</code></div>
+        <div class="cell">
+            <code class="title">elementHover</code>
+            Element used when dragging over it. If set to <code>undefined</code>, then element won't change.
+        </div>
+    </div>
+    <div class="row">
+        <div class="cell">string</div>
+        <div class="cell"><code>undefined</code></div>
+        <div class="cell">
+            <code class="title">elementHoverStyle</code>
+            CSS style to be applied to the element thats used when dragging over it.
+        </div>
+    </div>
+    <div class="row">
+        <div class="cell">HTMLElement</div>
+        <div class="cell"><code>undefined</code></div>
+        <div class="cell">
+            <code class="title">elementOrigin</code>
+            Element used when a draggable element is held. If set to <code>undefined</code>, then element won't change.
+        </div>
+    </div>
+    <div class="row">
+        <div class="cell">string</div>
+        <div class="cell"><code>undefined</code></div>
+        <div class="cell">
+            <code class="title">elementOriginStyle</code>
+            CSS style to be applied to the element thats used when a draggable element is held.
+        </div>
+    </div>
+    <div class="row">
+        <div class="cell">function</div>
+        <div class="cell"><code>undefined</code></div>
+        <div class="cell">
+            <code class="title">onHold</code>
+            A function that will run when an element is held. This function will have an expected parameter <code>heldItem</code> of type <code>HTMLElement</code> which is the element that is being held.
+        </div>
+    </div>
+    <div class="row">
+        <div class="cell">function</div>
+        <div class="cell"><code>undefined</code></div>
+        <div class="cell">
+            <code class="title">onRelease</code>
+            A function that will run when once an element is released. This function will have expected parameters <code>releasedItem</code> and <code>itemOver</code> (both of type <code>HTMLElement</code>) which is the element that is being released and being hovered respectively. <code>itemOver</code> may be <code>undefined</code> if nothing is being hovered.
+        </div>
+    </div>
+    <div class="row">
+        <div class="cell">function</div>
+        <div class="cell"><code>undefined</code></div>
+        <div class="cell">
+            <code class="title">onSwap</code>
+            A function that will run when right before a dragged element is swapped. This function will have expected parameters <code>releasedItem</code> and <code>itemOver</code> (both of type <code>HTMLElement</code>) which is the element that is being released and being hovered respectively.
+        </div>
+    </div>
+    <div class="row">
+        <div class="cell">Array of Objects</div>
+        <div class="cell"><code>[]</code></div>
+        <div class="cell">
+            <code class="title">itemProperty</code>
+            An Array of property objects. These are properties that apply to each item individually. More details below.
+        </div>
+    </div>
+</div>
+<h2>Item Properties</h2>
+<p>These properties apply to each individual item rather than globally. They behave the same way as their default counterpart otherwise. If set, these properties will take priority over the default properties</p>
+<div class="table">
+    <div class="header">
+        <div class="cell">Type</div>
+        <div class="cell">Default</div>
+        <div class="cell">Property</div>
+    </div>
+    <div class="row">
+        <div class="cell">number</div>
+        <div class="cell"><code>undefined</code></div>
+        <div class="cell">
+            <code class="title">id</code>
+            id of item that the property applies to.
+        </div>
+    </div>
+    <div class="row">
+        <div class="cell">string</div>
+        <div class="cell"><code>undefined</code></div>
+        <div class="cell">
+            <code class="title">holdCursor</code>
+        </div>
+    </div>
+    <div class="row">
+        <div class="cell">HTMLElement</div>
+        <div class="cell"><code>undefined</code></div>
+        <div class="cell">
+            <code class="title">elementHeld</code>
+        </div>
+    </div>
+    <div class="row">
+        <div class="cell">string</div>
+        <div class="cell"><code>undefined</code></div>
+        <div class="cell">
+            <code class="title">elementHeldStyle</code>
+        </div>
+    </div>
+    <div class="row">
+        <div class="cell">HTMLElement</div>
+        <div class="cell"><code>undefined</code></div>
+        <div class="cell">
+            <code class="title">elementHover</code>
+        </div>
+    </div>
+    <div class="row">
+        <div class="cell">string</div>
+        <div class="cell"><code>undefined</code></div>
+        <div class="cell">
+            <code class="title">elementHoverStyle</code>
+        </div>
+    </div>
+    <div class="row">
+        <div class="cell">HTMLElement</div>
+        <div class="cell"><code>undefined</code></div>
+        <div class="cell">
+            <code class="title">elementOrigin</code>
+        </div>
+    </div>
+    <div class="row">
+        <div class="cell">string</div>
+        <div class="cell"><code>undefined</code></div>
+        <div class="cell">
+            <code class="title">elementOriginStyle</code>
+        </div>
+    </div>
+    <div class="row">
+        <div class="cell">function</div>
+        <div class="cell"><code>undefined</code></div>
+        <div class="cell">
+            <code class="title">onHold</code>
+        </div>
+    </div>
+    <div class="row">
+        <div class="cell">function</div>
+        <div class="cell"><code>undefined</code></div>
+        <div class="cell">
+            <code class="title">onRelease</code>
+        </div>
+    </div>
+    <div class="row">
+        <div class="cell">function</div>
+        <div class="cell"><code>undefined</code></div>
+        <div class="cell">
+            <code class="title">onSwap</code>
+        </div>
+    </div>
+    <div class="row">
+        <div class="cell">Array of numbers</div>
+        <div class="cell"><code>undefined</code></div>
+        <div class="cell">
+            <code class="title">swapGroup</code>
+            An array of ids that item with id <code>this.id</code> is allowed to swap with.<br>
+            Note: This means swapping is not necassarily bi-directional. If set to <code>undefined</code>, item with id <code>this.id</code> can swap with all items.
+        </div>
+    </div>
+</div>
+<h2>Functions</h2>
+<div class="table">
+    <div class="header">
+        <div class="cell">Return Type</div>
+        <div class="cell">Parameters</div>
+        <div class="cell">Function</div>
+    </div>
+    <div class="row">
+        <div class="cell">undefined</div>
+        <div class="cell"><code>id</code>: id of an HTML element ("#" not included)</div>
+        <div class="cell">
+            <code class="title">initializeMoveIt(id)</code>
+            Initial set up for MoveIt.
+        </div>
+    </div>
+    <div class="row">
+        <div class="cell">Array of Objects</div>
+        <div class="cell">undefined</div>
+        <div class="cell">
+            <code class="title">getItems()</code>
+            Returns all MoveIt items.
+        </div>
+    </div>
+    <div class="row">
+        <div class="cell">boolean</div>
+        <div class="cell"><code>item</code>: A swappable HTML element</div>
+        <div class="cell">
+            <code class="title">isInGroup(item)</code>
+            Returns true if element is a MoveIt item.
+        </div>
+    </div>
+    <div class="row">
+        <div class="cell">boolean</div>
+        <div class="cell">
+            <code>srcId</code>: id of first item<br>
+            <code>destId</code>: id of second item
+        </div>
+        <div class="cell">
+            <code class="title">canDragWith(srcId, destId)</code>
+            Returns true if item with id <code>srcId</code> can swap with <code>destId</code>.
+        </div>
+    </div>
+    <div class="row">
+        <div class="cell">Array of Objects</div>
+        <div class="cell"><code>itemId</code>: id of an item</div>
+        <div class="cell">
+            <code class="title">getItemProperty(itemId)</code>
+            Returns the item property object corresponding to <code>itemId</code>.
+        </div>
+    </div>
+    <div class="row">
+        <div class="cell">undefined</div>
+        <div class="cell">
+            <code>srcIdArr</code>: Array of ids that are to be changed<br>
+            <code>destIdArr</code>: Array of ids to be added
+        </div>
+        <div class="cell">
+            <code class="title">addDraggableWith(srcIdArr, destIdArr)</code>
+            Adds ids from <code>destIdArr</code> to every id in <code>srcIdArr</code>. If any parameter is passed <code>undefined</code>, this means all item ids.
+        </div>
+    </div>
+    <div class="row">
+        <div class="cell">undefined</div>
+        <div class="cell">
+            <code>srcIdArr</code>: Array of ids that are to be changed<br>
+            <code>destIdArr</code>: Array of ids to be set
+        </div>
+        <div class="cell">
+            <code class="title">setDraggableWith(srcIdArr, destIdArr)</code>
+            Sets ids from <code>destIdArr</code> to every id in <code>srcIdArr</code>. If any parameter is passed <code>undefined</code>, this means all item ids.
+        </div>
+    </div>
+    <div class="row">
+        <div class="cell">undefined</div>
+        <div class="cell">
+            <code>srcIdArr</code>: Array of ids that are to be changed<br>
+            <code>destIdArr</code>: Array of ids to be removed
+        </div>
+        <div class="cell">
+            <code class="title">removeDraggableWith(srcIdArr, destIdArr)</code>
+            Removes ids from <code>destIdArr</code> to every id in <code>srcIdArr</code>. If any parameter is passed <code>undefined</code>, this means all item ids.
+        </div>
+    </div>
+    <div class="row">
+        <div class="cell">HTMLElement</div>
+        <div class="cell"><code>itemId</code>: id of an item</div>
+        <div class="cell">
+            <code class="title">getItemById(itemId)</code>
+            Returns the item with id <code>itemId</code>. Returns <code>undefined</code> if there is no corresponding id.
+        </div>
+    </div>
+    <div class="row">
+        <div class="cell">number</div>
+        <div class="cell"><code>item</code>: A swappable HTML element</div>
+        <div class="cell">
+            <code class="title">getIdByItem(item)</code>
+            Returns the id of <code>item</code>. Returns <code>undefined</code> if item is not a swappable HTML element.
+        </div>
+    </div>
+    <div class="row">
+        <div class="cell">undefined</div>
+        <div class="cell">
+            <code>itemOne</code>: First item<br>
+            <code>itemTwo</code>: Second item
+        </div>
+        <div class="cell">
+            <code class="title">swap(itemOne, itemTwo)</code>
+            Swaps <code>itemOne</code> and <code>itemTwo</code> with eachother on the DOM. This will fail if more than one item passed is not a swappable HTML element.<br>
+            Note: This will not check if item's property allows for other item to be swapped. This is because developers are the ones controlling swaps rather than users.
+        </div>
+    </div>
+    <div class="row">
+        <div class="cell">undefined</div>
+        <div class="cell">undefined</div>
+        <div class="cell">
+            <code class="title">cleanMoveIt()</code>
+            This will ensure all the properties in MoveIt are a valid value. This will remove properties with invalid values by removing them from an array or reseting back to default value.
+        </div>
+    </div>
+</div>

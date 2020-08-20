@@ -2,7 +2,7 @@
 <p>
     Elements can have functions you can set for different states.
 </p>
-<div id="box">
+<div class="box">
     <div moveit-item class="ball">
         <img src="res/soccer.png">
     </div>
@@ -13,10 +13,9 @@
         <p>Nothing is happening</p>
     </div>
 </div>
-<div class="example">
+<div class="code">
     <h3>JavaScript</h3>
-    <pre>
-// Element to update
+    <pre><code>// Element to update
 const textField = document.querySelector(...);
 
 // Functions
@@ -39,6 +38,5 @@ MoveIt.onSwap = (releasedItem, itemOver) => {
     const releasedText = MoveIt.getIdByItem(releasedItem) === 0 ? "Soccer ball" : "Basketball";
     const overText = MoveIt.getIdByItem(itemOver) === 0 ? "Soccer ball" : "Basketball";
     textField.innerText += "\n" + releasedText + " swapped with " + overText;
-}
-    </pre>
+}</code></pre>
 </div>

@@ -20,13 +20,13 @@
         const itemProperty = [];
         items.map((item, i) => itemProperty.push({
             id: i,
-            holdCursor: undefined,
+            holdCenter: undefined,
             elementHeld: undefined,
             elementHeldStyle: undefined,
             elementHover: undefined,
             elementHoverStyle: undefined,
-            elementWhenHeld: undefined,
-            elementWhenHeldStyle: undefined,
+            elementOrigin: undefined,
+            elementOriginStyle: undefined,
             onHold: undefined,
             onRelease: undefined,
             onSwap: undefined,
@@ -46,7 +46,7 @@
         heldElement.style.position = "fixed";
         heldElement.style.zIndex = Number.MAX_SAFE_INTEGER;
         heldElement.style.pointerEvents = "none";
-        document.body.style.cursor = (itemProperty.holdCursor || MoveIt.holdCursor) || document.body.style.cursor;
+        document.body.style.cursor = MoveIt.holdCursor || document.body.style.cursor;
         document.body.style.userSelect = "none";
         itemProperty.onHold ? itemProperty.onHold(heldElement) : (MoveIt.onHold && MoveIt.onHold(heldElement));
         document.body.appendChild(heldElement);
@@ -72,13 +72,13 @@
     function switchItem(item, type) {
         if (type === "held") {
             const itemProperty = MoveIt.getItemProperty(heldId);
-            const replaceElement = (itemProperty.elementWhenHeld || MoveIt.elementWhenHeld) || item;
+            const replaceElement = (itemProperty.elementOrigin || MoveIt.elementOrigin) || item;
             heldElementHTML = item.outerHTML;
             heldElementClass = item.cloneNode(true).className;
             replaceElement.setAttribute("moveit-id", heldId);
             replaceElement.setAttribute("moveit-item", undefined);
-            if (itemProperty.elementWhenHeldStyle || MoveIt.elementWhenHeldStyle) {
-                replaceElement.setAttribute("style", itemProperty.elementWhenHeldStyle || MoveIt.elementWhenHeldStyle);
+            if (itemProperty.elementOriginStyle || MoveIt.elementOriginStyle) {
+                replaceElement.setAttribute("style", itemProperty.elementOriginStyle || MoveIt.elementOriginStyle);
             }
             item.outerHTML = replaceElement.outerHTML;
         } else if (type === "hover") {
@@ -155,8 +155,8 @@
         elementHeldStyle: undefined,
         elementHover: undefined,
         elementHoverStyle: undefined,
-        elementWhenHeld: undefined,
-        elementWhenHeldStyle: undefined,
+        elementOrigin: undefined,
+        elementOriginStyle: undefined,
         onHold: undefined,
         onRelease: undefined,
         onSwap: undefined,
@@ -170,12 +170,13 @@
                     const itemProperty = MoveIt.getItemProperty(MoveIt.getIdByItem(item));
                     if (item && (!itemProperty.swapGroup || itemProperty.swapGroup.length > 0)) {
                         holdItem(item);
-                        let shiftX = MoveIt.holdCenter ? heldElement.offsetWidth / 2 : e.pageX - item.getBoundingClientRect().left;
-                        let shiftY = MoveIt.holdCenter ? heldElement.offsetHeight / 2 : e.pageY - item.getBoundingClientRect().top;
+                        const isCenter = typeof itemProperty.holdCenter === "undefined" ? MoveIt.holdCenter : itemProperty.holdCenter;
+                        let shiftX = isCenter ? heldElement.offsetWidth / 2 : e.pageX - item.getBoundingClientRect().left;
+                        let shiftY = isCenter ? heldElement.offsetHeight / 2 : e.pageY - item.getBoundingClientRect().top;
                         switchItem(item, "held");
-                        elementX = e.pageX - shiftX - (MoveIt.holdCenter ? document.scrollingElement.scrollLeft : 0);
-                        elementY = e.pageY - shiftY - (MoveIt.holdCenter ? document.scrollingElement.scrollTop : 0);
-                        if (!MoveIt.holdCenter) {
+                        elementX = e.pageX - shiftX - (isCenter ? document.scrollingElement.scrollLeft : 0);
+                        elementY = e.pageY - shiftY - (isCenter ? document.scrollingElement.scrollTop : 0);
+                        if (!isCenter) {
                             shiftX -= document.scrollingElement.scrollLeft;
                             shiftY -= document.scrollingElement.scrollTop;
                         }
@@ -329,8 +330,8 @@
             typeof MoveIt.elementHeldStyle !== "string" && (MoveIt.elementHeldStyle = undefined);
             MoveIt.elementHover instanceof HTMLElement || (MoveIt.elementHover = undefined);
             typeof MoveIt.elementHoverStyle !== "string" && (MoveIt.elementHoverStyle = undefined);
-            MoveIt.elementWhenHeld instanceof HTMLElement || (MoveIt.elementWhenHeld = undefined);
-            typeof MoveIt.elementWhenHeldStyle !== "string" && (MoveIt.elementWhenHeldStyle = undefined);
+            MoveIt.elementOrigin instanceof HTMLElement || (MoveIt.elementOrigin = undefined);
+            typeof MoveIt.elementOriginStyle !== "string" && (MoveIt.elementOriginStyle = undefined);
             typeof MoveIt.holdCenter !== "boolean" && (MoveIt.holdCursor = false);
             (typeof MoveIt.dragWeight !== "number" || MoveIt < 0) && (MoveIt.dragWeight = 0);
             typeof MoveIt.onHold !== "function" && (MoveIt.onHold = undefined);
@@ -342,13 +343,13 @@
                 });
                 MoveIt.itemProperty = MoveIt.itemProperty.filter((itemProp, index) => MoveIt.itemProperty.indexOf(itemProp) === index);
                 MoveIt.itemProperty.forEach(itemProp => {
-                    typeof itemProp.holdCursor !== "string" && (itemProp.holdCursor = undefined);
+                    typeof itemProp.holdCenter !== "boolean" && (itemProp.holdCursor = undefined);
                     itemProp.elementHeld instanceof HTMLElement || (itemProp.elementHeld = undefined);
                     typeof itemProp.elementHeldStyle !== "string" && (itemProp.elementHeldStyle = undefined);
                     itemProp.elementHover instanceof HTMLElement || (itemProp.elementHover = undefined);
                     typeof itemProp.elementHoverStyle !== "string" && (itemProp.elementHoverStyle = undefined);
-                    itemProp.elementWhenHeld instanceof HTMLElement || (itemProp.elementWhenHeld = undefined);
-                    typeof itemProp.elementWhenHeldStyle !== "string" && (itemProp.elementWhenHeldStyle = undefined);
+                    itemProp.elementOrigin instanceof HTMLElement || (itemProp.elementOrigin = undefined);
+                    typeof itemProp.elementOriginStyle !== "string" && (itemProp.elementOriginStyle = undefined);
                     typeof itemProp.onHold !== "function" && (itemProp.onHold = undefined);
                     typeof itemProp.onRelease !== "function" && (itemProp.onRelease = undefined);
                     typeof itemProp.onSwap !== "function" && (itemProp.onSwap = undefined);

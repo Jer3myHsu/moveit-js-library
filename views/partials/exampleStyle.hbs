@@ -3,7 +3,7 @@
 <p>
     Elements can be set to something different when Dragging. Try dragging!
 </p>
-<div id="box">
+<div class="box">
     <div moveit-item class="picture">1</div>
     <div moveit-item class="picture">2</div>
 </div>
@@ -11,10 +11,9 @@
     In this example, the item changes to a red rectangle when it gets picked up. The actual item being held becomes a black circle.
     When hovering over the another item, the hovered item changes to a blue rectangle.
 </p>
-<div class="example">
+<div class="code">
     <h3>JavaScript</h3>
-    <pre>
-// Make sure cursor is at the center of the held item
+    <pre><code>// Make sure cursor is at the center of the held item
 MoveIt.holdCenter = true;
 
 
@@ -30,17 +29,16 @@ hover.style.height = "208px";
 hover.style.width = "268px";
 hover.style.backgroundColor = "blue";
 
-const whenHeld = document.createElement("div");
-whenHeld.style.height = "208px";
-whenHeld.style.width = "268px";
-whenHeld.style.backgroundColor = "red";
+const origin = document.createElement("div");
+origin.style.height = "208px";
+origin.style.width = "268px";
+origin.style.backgroundColor = "red";
 
 
 // Apply elements for all items
 MoveIt.elementHeld = held;
 MoveIt.elementHover = hover;
-MoveIt.elementWhenHeld = whenHeld;
-    </pre>
+MoveIt.elementOrigin = origin;</code></pre>
 </div>
 <b>Warning</b>
 <p>
@@ -51,7 +49,7 @@ MoveIt.elementWhenHeld = whenHeld;
 <p>
     Each element can be set Individuallly. Try dragging!
 </p>
-<div id="box">
+<div class="box">
     <div moveit-item class="ball">
         <img src="res/basketball.png">
     </div>
@@ -67,27 +65,23 @@ MoveIt.elementWhenHeld = whenHeld;
     the ball becomes translucent.
 </p>
 <div class="row">
-    <div class="example">
+    <div class="code">
         <h3>JavaScript</h3>
-        <pre>
-MoveIt.itemProperty.forEach(itemProp => {
+        <pre><code>MoveIt.itemProperty.forEach(itemProp => {
     // id of soccerball item
     if (itemProp.id === 3) {
         itemProp.elementHeldStyle = "animation: spin 0.5s infinite linear;";
-        itemProp.elementWhenHeldStyle = "visibility: hidden;";
+        itemProp.elementOriginStyle = "visibility: hidden;";
     } else {
         itemProp.elementHoverStyle = "opacity: 0.5";
     }
-});
-        </pre>
+});</code></pre>
     </div>
-    <div class="example">
+    <div class="code">
         <h3>CSS</h3>
-        <pre>
-@keyframes spin {
+        <pre><code>@keyframes spin {
     0%  {transform: rotate(0deg);}
     100% {transform: rotate(360deg);}   
-}
-        </pre>
+}</code></pre>
     </div>
 </div>

@@ -1,0 +1,16 @@
+<div class="navigation">
+	<a {{#if_str_eq content 'overview'}} class="selected" {{/if_str_eq}} href="?page=overview">Overview</a>
+	<a {{#if_str_eq content 'api'}} class="selected" {{/if_str_eq}} href="?page=api">API Reference</a>
+	<a {{#if_str_eq content 'tips'}} class="selected" {{/if_str_eq}} href="?page=tips">Tips</a>
+</div>
+<div>
+	{{#if_str_eq content 'overview'}}
+{{>overview}}
+	{{/if_str_eq}}
+	{{#if_str_eq content 'api'}}
+{{>api}}
+	{{/if_str_eq}}
+	{{#if_str_eq content 'tips'}}
+{{>tips}}
+	{{/if_str_eq}}
+</div>

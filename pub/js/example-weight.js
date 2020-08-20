@@ -1,11 +1,11 @@
 "user strict";
 
-MoveIt.initializeMoveIt("box");
+MoveIt.initializeMoveIt();
 
-MoveIt.onHold = (item) => {
-    const value = parseFloat(document.querySelector(".input").value);
+function inputChange(item) {
+    const value = parseFloat(item.value);
     if (value !== NaN) {
         MoveIt.dragWeight = value;
-        document.querySelector("pre").innerText = "MoveIt.dragWeight = " + value + ";"
+        document.querySelector("code").innerText = "MoveIt.dragWeight = " + value + ";"
     }
 }

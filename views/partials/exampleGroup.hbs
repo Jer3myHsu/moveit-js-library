@@ -3,7 +3,7 @@
 <p>
     Elements can be set to only drag with certain items.
 </p>
-<div id="box">
+<div class="box">
     <div moveit-item class="card">1</div>
     <div moveit-item class="card">2</div>
     <div moveit-item class="card">3</div>
@@ -14,24 +14,22 @@
 <p>
     In this example, items can only be swapped with numbers that are less than it. Notice that "1" cannot be dragged.
 </p>
-<div class="example">
+<div class="code">
     <h3>JavaScript</h3>
-    <pre>
-MoveIt.setDraggableWith([0,1,2,3,4,5], []);
+    <pre><code>MoveIt.setDraggableWith([0,1,2,3,4,5], []);
 MoveIt.addDraggableWith([1,2,3,4,5], [0]);
 MoveIt.addDraggableWith([2,3,4,5], [1]);
 MoveIt.addDraggableWith([3,4,5], [2]);
 MoveIt.addDraggableWith([4,5], [3]);
-MoveIt.addDraggableWith([5], [4]);
-    </pre>
+MoveIt.addDraggableWith([5], [4]);</code></pre>
 </div>
 <b>Warning</b>
 <p>
-    If the element used for <code style="font-size: 12pt;">moveIt.elementHover</code> is a different size than the original item,
+    If the element used for <code>moveIt.elementHover</code> is a different size than the original item,
     it could cause hovering inaccuracy.
 </p>
 <h3>Subgroups</h3>
-<div id="box">
+<div class="box">
     <div moveit-item class="card">1</div>
     <div moveit-item class="card">2</div>
     <div moveit-item class="card">3</div>
@@ -42,10 +40,8 @@ MoveIt.addDraggableWith([5], [4]);
 <p>
     In this example, items labelled with even numbers can only be swapped with even numbers and odd with odd.
 </p>
-<div class="example">
+<div class="code">
     <h3>JavaScript</h3>
-    <pre>
-MoveIt.setDraggableWith([0,2,4], [0,2,4]);
-MoveIt.setDraggableWith([1,3,5], [1,3,5]);
-    </pre>
+    <pre><code>MoveIt.setDraggableWith([0,2,4], [0,2,4]);
+MoveIt.setDraggableWith([1,3,5], [1,3,5]);</code></pre>
 </div>

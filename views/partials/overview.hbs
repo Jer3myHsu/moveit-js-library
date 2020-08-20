@@ -1,0 +1,78 @@
+<h1>Getting Started</h1>
+<h2>Introduction</h2>
+<p>
+    MoveIt.js allows developers to swap element positions with other elements on the viewport. Elements can be swapped by dragging or by 
+    calling a function. Developers can choose which elements can be swapped and with what elements they can be swapped with. Here are some 
+    objects that developers could allow to be swapped using this library:
+</p>
+<ul>
+    <li>Rows in a table</li>
+    <li>Information cards</li>
+    <li>Shopping items</li>
+    <li>Photo Album</li>
+</ul>
+<p>
+    With action function, developers can allow more than just swapping. For example, a feature to delete the cards can also be implemented when 
+    dragged to a garbage bin. A developer could also make shopping site where product items can be moved to a shopping cart.
+</p>
+<h2>Understanding MoveIt.js</h2>
+<h3>Items</h3>
+<p>
+    In order to allow HTML elements to be swapped, the attribute <code>moveit-item</code> must be added to it. Once MoveIt is initialized, 
+    it will be given a unqiue id as an attribute <code>moveit-id</code>. Now, the swappable HTML elements are a MoveIt <b>item</b>.
+</p>
+<div class="code">
+        <pre><code>&lt;div id="content">
+    &lt;div moveit-item class="card" moveit-id="0">
+        &lt;img src="picture.png">
+    &lt;/div>
+    &lt;div moveit-item class="card">
+        &lt;img src="differentPicture.png" moveit-id="1">
+    &lt;/div>
+&lt;/div></code></pre>
+</div>
+<p>Once <code>moveit-item</code> is added, its children cannot be an item as well. The children will simply be ignored.</p>
+<h3>Swapping</h3>
+<p>
+    To swap two items by dragging, the user must click and hold an item. The item picked up is <b>held</b> and its orignal 
+    element is known as the <b>origin</b>. When dragging over another item, the item underneath is considered to be the 
+    <b>hovered</b>.
+</p>
+<div id="moveIt">
+    <div moveit-item class="rect">item 1</div>
+    <div moveit-item class="rect">item 2</div>
+</div>
+<h3>Properties</h3>
+<p>
+    Items have properties that determine how they behave. These are called <b>default properties</b> and all items follow them. Each item also 
+    has a set of <b>item properties</b> that only apply to that specific item. If an items item property is not set, it will resort to using 
+    the default properties.
+</p>
+<div class="table">
+    <div class="header">
+        <div class="cell"></div>
+        <div class="cell">Item Property</div>
+        <div class="cell">Default Property</div>
+        <div class="cell">Result</div>
+    </div>
+    <div class="row">
+        <div class="cell">holdCursor</div>
+        <div class="cell">"pointer"</div>
+        <div class="cell">"default"</div>
+        <div class="cell">"pointer"</div>
+    </div>
+    <div class="row">
+        <div class="cell">dragWeight</div>
+        <div class="cell">undefined</div>
+        <div class="cell">0</div>
+        <div class="cell">0</div>
+    </div>
+    <div class="row">
+        <div class="cell">elementHeldStyle</div>
+        <div class="cell">"color: red;"</div>
+        <div class="cell">undefined</div>
+        <div class="cell">"color: red;"</div>
+    </div>
+</div>
+<script type="text/javascript" src="js/MoveIt.js"></script>
+<script type="text/javascript" src="js/overview.js"></script>

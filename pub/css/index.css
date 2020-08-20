@@ -44,6 +44,11 @@ body {
     flex-direction: row;
 }
 
+h1, h2, h3 {
+    margin-top: 10px;
+    margin-bottom: 4px;
+}
+
 #menu > a {
     height: 100%;
     text-decoration: none;
@@ -57,11 +62,64 @@ body {
 }
 
 .content {
-    width: 70%;
+    width: 66%;
     flex: 1 0 0;
 }
 
+.navigation {
+    position: absolute;
+    top: 60px;
+    left: 2%;
+    display: flex;
+    flex-direction: column;
+    min-width: 172px;
+    border-radius: 14px;
+    background-color: #F0F0F0;
+}
+
+.navigation > a {
+    text-decoration: none;
+    color: black;
+    margin: 10px 20px;
+    text-align: start;
+    transition: all ease-in-out 0.2s;
+}
+
+.navigation > a:hover {
+    color: gray;
+}
+
+.navigation > .selected {
+    color: royalblue;
+}
+
+a {
+    color: royalblue;
+    transition: color ease-in-out 0.2s;
+}
+
+a:active {
+    color: mediumpurple;
+}
+
+pre {
+    padding: 20px;
+    font-size: 10pt;
+    border-radius: 14px;
+    background-color: #F0F0F0;
+}
+
+.code {
+    margin: 10px 20px;
+}
+
+code {
+    font-size: 12pt;
+}
+
 footer {
+    padding-top: 12px;
+    padding-bottom: 4px;
     color: slategray;
     flex-shrink: 0;
 }

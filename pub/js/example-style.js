@@ -1,6 +1,6 @@
 "user strict";
 
-MoveIt.initializeMoveIt("box");
+MoveIt.initializeMoveIt();
 
 MoveIt.setDraggableWith([0,1], [0,1]);
 
@@ -19,24 +19,16 @@ MoveIt.itemProperty.forEach(itemProp => {
         hover.style.width = "204px";
         hover.style.backgroundColor = "blue";
         itemProp.elementHover = hover;
-        const whenHeld = document.createElement("div");
-        whenHeld.style.height = "144px";
-        whenHeld.style.width = "204px";
-        whenHeld.style.backgroundColor = "red";
-        itemProp.elementWhenHeld = whenHeld;
-        itemProp.onHold = (element) => {
-            MoveIt.holdCenter = true;
-        }
+        const origin = document.createElement("div");
+        origin.style.height = "144px";
+        origin.style.width = "204px";
+        origin.style.backgroundColor = "red";
+        itemProp.elementOrigin = origin;
+        itemProp.holdCenter = true;
     } else if (itemProp.id === 3) {
         itemProp.elementHeldStyle = "animation: spin 0.5s infinite linear;";
-        itemProp.elementWhenHeldStyle = "visibility: hidden;";
-        itemProp.onHold = (element) => {
-            MoveIt.holdCenter = false;
-        }
+        itemProp.elementOriginStyle = "visibility: hidden;";
     } else {
         itemProp.elementHoverStyle = "opacity: 0.5";
-        itemProp.onHold = (element) => {
-            MoveIt.holdCenter = false;
-        }
     }
 });

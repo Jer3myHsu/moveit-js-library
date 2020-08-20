@@ -6,7 +6,7 @@ MoveIt.setDraggableWith([0], []);
 MoveIt.setDraggableWith([1, 2], [0]);
 
 
-MoveIt.elementWhenHeldStyle = "visibility: hidden;";
+MoveIt.elementOriginStyle = "visibility: hidden;";
 
 MoveIt.itemProperty.forEach(prop => {
     if (!prop.id) prop.elementHoverStyle = "opacity: 0.5; z-index: 1;";

@@ -2,7 +2,7 @@
 <p>
     Different weights change how fast the held item will follow your cursor. Try dragging!
 </p>
-<div id="box">
+<div class="box">
     <div moveit-item class="card-2">
         <img src="res/feather.png">
     </div>
@@ -13,10 +13,9 @@
 <h3>Weight</h3>
 <label>
     Enter Number:
-    <input class="input" type="number" min="0" value="0">
+    <input class="input" type="number" min="0" value="0" onclick="inputChange(this)">
 </label>
-<div class="example">
+<div class="code">
     <h3>JavaScript</h3>
-    <pre>
-MoveIt.holdCursor = 'default';</pre>
+    <pre><code>MoveIt.dragWeight = 0;</code></pre>
 </div>

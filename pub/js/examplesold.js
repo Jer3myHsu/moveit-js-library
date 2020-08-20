@@ -65,7 +65,7 @@ function onRecordSwap(heldRecord, emptyRecord) {
 }
 
 MoveIt.elementHeldStyle = "opacity: 0.8;";
-MoveIt.elementWhenHeld = placeholder;
+MoveIt.elementOrigin = placeholder;
 MoveIt.onHold = onRecordHold;
 MoveIt.onRelease = onRecordRelease;
 MoveIt.onSwap = onRecordSwap;
