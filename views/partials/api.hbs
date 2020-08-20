@@ -19,7 +19,9 @@
         <div class="cell"><code>undefined</code></div>
         <div class="cell">
             <code class="title">holdCursor</code>
-            A keyword of CSS cursor property that will be used when dragging. For a list of possible cursors <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/cursor">click here</a>. If set to <code>undefined</code>, then the current cursor will be used.
+            A keyword of CSS cursor property that will be used when dragging. For a list of possible cursors 
+            <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/cursor">click here</a>. If set to <code>undefined</code>, then the 
+            current cursor will be used.
         </div>
     </div>
     <div class="row">
@@ -91,7 +93,8 @@
         <div class="cell"><code>undefined</code></div>
         <div class="cell">
             <code class="title">onHold</code>
-            A function that will run when an element is held. This function will have an expected parameter <code>heldItem</code> of type <code>HTMLElement</code> which is the element that is being held.
+            A function that will run when an element is held. This function will have an expected parameter <code>heldItem</code> of type 
+            <code>HTMLElement</code> which is the element that is being held.
         </div>
     </div>
     <div class="row">
@@ -99,7 +102,8 @@
         <div class="cell"><code>undefined</code></div>
         <div class="cell">
             <code class="title">onRelease</code>
-            A function that will run when once an element is released. This function will have expected parameters <code>releasedItem</code> and <code>itemOver</code> (both of type <code>HTMLElement</code>) which is the element that is being released and being hovered respectively. <code>itemOver</code> may be <code>undefined</code> if nothing is being hovered.
+            A function that will run when once an element is released. This function will have expected parameters <code>releasedItem</code> 
+            and <code>itemOver</code> (both of type <code>HTMLElement</code>) which is the element that is being released and being hovered respectively. <code>itemOver</code> may be <code>undefined</code> if nothing is being hovered.
         </div>
     </div>
     <div class="row">
@@ -107,7 +111,9 @@
         <div class="cell"><code>undefined</code></div>
         <div class="cell">
             <code class="title">onSwap</code>
-            A function that will run when right before a dragged element is swapped. This function will have expected parameters <code>releasedItem</code> and <code>itemOver</code> (both of type <code>HTMLElement</code>) which is the element that is being released and being hovered respectively.
+            A function that will run when right before a dragged element is swapped. This function will have expected parameters 
+            <code>releasedItem</code> and <code>itemOver</code> (both of type <code>HTMLElement</code>) which is the element that is being 
+            released and being hovered respectively.
         </div>
     </div>
     <div class="row">
@@ -120,7 +126,8 @@
     </div>
 </div>
 <h2>Item Properties</h2>
-<p>These properties apply to each individual item rather than globally. They behave the same way as their default counterpart otherwise. If set, these properties will take priority over the default properties</p>
+<p>These properties apply to each individual item rather than globally. They behave the same way as their default counterpart otherwise. If 
+    set, these properties will take priority over the default properties</p>
 <div class="table">
     <div class="header">
         <div class="cell">Type</div>
@@ -211,7 +218,8 @@
         <div class="cell">
             <code class="title">swapGroup</code>
             An array of ids that item with id <code>this.id</code> is allowed to swap with.<br>
-            Note: This means swapping is not necassarily bi-directional. If set to <code>undefined</code>, item with id <code>this.id</code> can swap with all items.
+            Note: This means swapping is not necassarily bi-directional. If set to <code>undefined</code>, item with id <code>this.id</code> 
+            can swap with all items.
         </div>
     </div>
 </div>
@@ -273,7 +281,8 @@
         </div>
         <div class="cell">
             <code class="title">addDraggableWith(srcIdArr, destIdArr)</code>
-            Adds ids from <code>destIdArr</code> to every id in <code>srcIdArr</code>. If any parameter is passed <code>undefined</code>, this means all item ids.
+            Adds ids from <code>destIdArr</code> to every id in <code>srcIdArr</code>. If any parameter is passed <code>undefined</code>, this 
+            means all item ids.
         </div>
     </div>
     <div class="row">
@@ -284,7 +293,8 @@
         </div>
         <div class="cell">
             <code class="title">setDraggableWith(srcIdArr, destIdArr)</code>
-            Sets ids from <code>destIdArr</code> to every id in <code>srcIdArr</code>. If any parameter is passed <code>undefined</code>, this means all item ids.
+            Sets ids from <code>destIdArr</code> to every id in <code>srcIdArr</code>. If any parameter is passed <code>undefined</code>, this 
+            means all item ids.
         </div>
     </div>
     <div class="row">
@@ -295,7 +305,8 @@
         </div>
         <div class="cell">
             <code class="title">removeDraggableWith(srcIdArr, destIdArr)</code>
-            Removes ids from <code>destIdArr</code> to every id in <code>srcIdArr</code>. If any parameter is passed <code>undefined</code>, this means all item ids.
+            Removes ids from <code>destIdArr</code> to every id in <code>srcIdArr</code>. If any parameter is passed <code>undefined</code>, 
+            this means all item ids.
         </div>
     </div>
     <div class="row">
@@ -322,8 +333,10 @@
         </div>
         <div class="cell">
             <code class="title">swap(itemOne, itemTwo)</code>
-            Swaps <code>itemOne</code> and <code>itemTwo</code> with eachother on the DOM. This will fail if more than one item passed is not a swappable HTML element.<br>
-            Note: This will not check if item's property allows for other item to be swapped. This is because developers are the ones controlling swaps rather than users.
+            Swaps <code>itemOne</code> and <code>itemTwo</code> with eachother on the DOM. This will fail if more than one item passed is not 
+            a swappable HTML element.<br>
+            Note: This will not check if item's property allows for other item to be swapped. This is because developers are the ones 
+            controlling swaps rather than users.
         </div>
     </div>
     <div class="row">
@@ -331,7 +344,8 @@
         <div class="cell">undefined</div>
         <div class="cell">
             <code class="title">cleanMoveIt()</code>
-            This will ensure all the properties in MoveIt are a valid value. This will remove properties with invalid values by removing them from an array or reseting back to default value.
+            This will ensure all the properties in MoveIt are a valid value. This will remove properties with invalid values by removing them 
+            from an array or reseting back to default value.
         </div>
     </div>
 </div>

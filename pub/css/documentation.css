@@ -37,7 +37,7 @@
     flex-direction: row;
 }
 
-#moveIt {
+.moveIt {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
@@ -52,4 +52,22 @@
     height: 80px;
     border: solid 2px black;
     padding: 20px;
+}
+
+.ball {
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+}
+
+.ball > img {
+    height: 100%;
+}
+
+.good > img {
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-drag: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
 }

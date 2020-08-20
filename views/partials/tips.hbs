@@ -1,1 +1,141 @@
 <h1>Tips</h1>
+<h2>Disable Drag on Images</h2>
+<p>
+    If <code>&lt;img></code> elements are used in an item, dragging from the image may cause. This is because images have a default drag and 
+    drop feature. Checkout the soccer ball below.
+</p>
+<div class="moveIt">
+    <div moveit-item class="ball">
+        <img src="res/soccer.png">
+    </div>
+    <div moveit-item class="ball good">
+        <img src="res/basketball.png">
+    </div>
+</div>
+<p>
+    To fix this issue we can use the CSS shown on the below.
+</p>
+<div class="code">
+        <pre><code>img {
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-drag: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+}</code></pre>
+</div>
+<h2>Hiding Items</h2>
+<p>
+    A common feature the developers might want is for the origin item to disappear when held. The developer can achieve this by using 
+    <code>visibility: hidden;</code> but if the developer wanted the hovered item to, the previous code will not work. Try the example below.
+</p>
+<div class="moveIt">
+    <div moveit-item class="rect">Bad</div>
+    <div moveit-item class="rect">Good</div>
+</div>
+<div class="code">
+        <pre><code>badItemProperty.elementHoverStyle = "visibility: hidden;";
+badItemProperty.elementOriginStyle = "visibility: hidden;";
+
+goodItemProperty.elementHoverStyle = "opacity: 0;";
+goodItemProperty.elementOriginStyle = "visibility: hidden;";</code></pre>
+</div>
+<p>
+    When the item labelled "Good" is dragged onto item "Bad", it begins flickering. This is because <code>visibility: hidden;</code> makes MoveIt 
+    believe the cursor is no longer hovering an item so the item reappears. But once it reappears, it applies the <code>hidden</code> again 
+    repeating this cycle. To fix this use, <code>opacity: 0;</code> instead.
+</p>
+<h2>Different Size Items</h2>
+<div class="row">
+    <p>
+        We will call the width and height of an element its inner dimenstion if it includes its content, padding, and border. We will can the 
+        width and height the out dimension if it includes the inner dimension and its margin. When setting a hover element or origin element, 
+        the size is important to consider. Try this example below.
+    </p>
+    <img src="res/dimension-model.png" height="200px">
+</div>
+<div class="moveIt">
+    <div moveit-item class="rect">Bad 1</div>
+    <div moveit-item class="rect">Bad 2</div>
+    <div moveit-item class="rect">Good</div>
+</div>
+<div class="code">
+        <pre><code>// First bad item
+const badHoverOne = document.createElement("div");
+badHoverOne.style.height = "84px";
+badHoverOne.style.width = "104px";
+badHoverOne.style.backgroundColor = "gray";
+badItemOneProp.elementHover = badHoverOne;
+const badOriginOne = document.createElement("div");
+badOriginOne.style.height = "84px";
+badOriginOne.style.width = "104px";
+badOriginOne.style.backgroundColor = "gray";
+badItemOneProp.elementOrigin = badOriginOne;
+
+// Second bad item
+const badHoverTwo = document.createElement("div");
+badHoverTwo.style.height = "84px";
+badHoverTwo.style.width = "104px";
+badHoverTwo.style.margin = "20px 30px";
+badHoverTwo.style.backgroundColor = "gray";
+badItemTwoProp.elementHover = badHoverTwo;
+const badOriginTwo = document.createElement("div");
+badOriginTwo.style.height = "84px";
+badOriginTwo.style.width = "104px";
+badOriginTwo.style.backgroundColor = "gray";
+badOriginTwo.style.margin = "20px 30px";
+badItemTwoProp.elementOrigin = badOriginTwo;
+
+// Good item
+const GoodHover = document.createElement("div");
+GoodHover.style.height = "84px";
+GoodHover.style.width = "104px";
+GoodHover.style.borderColor = "white";
+GoodHover.style.borderStyle = "solid";
+GoodHover.style.borderWidth = "20px 30px";
+GoodHover.style.backgroundColor = "gray";
+goodItemProp.elementHover = GoodHover;
+const goodOrigin = document.createElement("div");
+goodOrigin.style.height = "84px";
+goodOrigin.style.width = "104px";
+goodOrigin.style.backgroundColor = "gray";
+goodOrigin.style.margin = "20px 30px";
+goodItemProp.elementOrigin = goodOrigin;</code></pre>
+</div>
+<p>
+    The item labelled "Bad 1" has its hover element and origin element different sizes. When this item is held, it could potentially affects 
+    the layout causing elements on the DOM to move. Unless the developer specifically wanted this, this is not good to have. When item "Bad 1" 
+    is hovered over it causes a flickering effect for the same reason mentioned earlier. The item labelled "Bad 2" solves the size issue my with 
+    margins but it still has the flickering effect when hovered. This is because MoveIt does not detect an elements margin. Depending on the item 
+    there can be different ways of solving this issue. The item labelled "Good" uses a border instead of a margin.
+</p>
+<p>To ensure an item's hover element and origin element won't cause issues:</p>
+<ul>
+    <li>Element inner dimensions must be the same as the item (totatl dimension of the content, padding, and boder)</li>
+    <li>Element outer dimensions must be the same as the item (totatl dimension of the inner dimension and marign)</li>
+</ul>
+<p>
+    Setting a held element with different sizes is more flexible. With the <code>holdCenter</code> property, the item will always be in a good position.
+</p>
+<div class="moveIt">
+    <div moveit-item class="rect">Bad</div>
+    <div moveit-item class="rect">Good</div>
+</div>
+<h2>Reusing Elements</h2>
+<p>If a developer was to modify an item to set the held, hover, or origin element. It is important to use <code>cloneNode</code>.</p>
+<div class="moveIt">
+    <div moveit-item class="rect">Bad</div>
+    <div moveit-item class="rect">Good</div>
+</div>
+<div class="code">
+        <pre><code>const badHeld = MoveIt.getItemById(0);
+badHeld.style.backgroundColor = "red";
+badItemProp.elementHeld = badHeld;
+
+const goodHeld =  MoveIt.getItemById(1).cloneNode(true);
+goodHeld.style.backgroundColor = "red";
+goodItemProp.elementHeld = goodHeld;</code></pre>
+</div>
+<p>Without would affect the original item as well.</p>
+<script type="text/javascript" src="js/MoveIt.js"></script>
+<script type="text/javascript" src="js/tips.js"></script>
