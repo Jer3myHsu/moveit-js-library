@@ -31,7 +31,7 @@ app.get("/index", (req,res) => {
 app.get("/examples", (req, res) => {
 	if (!req.query.page) {
 		res.redirect("examples?page=style");
-	} else {
+	} else if (["style", "group", "action", "cursor", "weight"].includes(req.query.page)) {
 		res.render(layoutDir + "/examples", {
 			layout: "index",
 			title: "MoveIt | Examples",
@@ -39,13 +39,28 @@ app.get("/examples", (req, res) => {
 			header: true,
 			content: req.query.page
 		});
+	} else {
+		res.status(404).render(layoutDir + "/notFound", {
+			layout: "index",
+			title: "MoveIt | Page Not Found",
+			css: "notFound.css",
+			header: true
+		});
 	}
+});
+
+app.get("/examples/mail", (req, res) => {
+	res.render("mail", {title: "MoveIt | mail Page Example"});
+});
+
+app.get("/download", (req, res) => {
+	res.redirect("https://github.com/csc309-summer-2020/js-library-hsuchi");
 });
 
 app.get("/documentation", (req, res) => {
 	if (!req.query.page) {
 		res.redirect("documentation?page=overview");
-	} else {
+	} else if (["overview", "api", "tips"].includes(req.query.page)) {
 		res.render(layoutDir + "/documentation", {
 			layout: "index",
 			title: "MoveIt | Get Started",
@@ -53,8 +68,24 @@ app.get("/documentation", (req, res) => {
 			header: true,
 			content: req.query.page
 		});
+	} else {
+		res.status(404).render(layoutDir + "/notFound", {
+			layout: "index",
+			title: "MoveIt | Page Not Found",
+			css: "notFound.css",
+			header: true
+		});
 	}
 });
+
+app.get('*', function(req, res){
+	res.status(404).render(layoutDir + "/notFound", {
+		layout: "index",
+		title: "MoveIt | Page Not Found",
+		css: "notFound.css",
+		header: true
+	});
+  });
 
 const port = process.env.PORT || 5000;
 app.listen(port, () => {

@@ -3,6 +3,10 @@
     100% {transform: rotate(360deg);}   
 }
 
+.navigation > a > img {
+    height: 12px;
+}
+
 .row {
     height: 100%;
     display: flex;
@@ -46,7 +50,7 @@
 }
 
 .picture {
-    background-image: url("../res/placeholder.png");
+    background-image: url("../image/example/placeholder.png");
     background-position: center;
     width: 180px;
     height: 120px;
@@ -82,7 +86,12 @@
     height: 100px;
 }
 
-.ball > img, .card > img, .card-2 > img {
+.trashcan {
+    width: 100px;
+    height: 100px;
+}
+
+.ball > img, .card > img, .card-2 > img, .trashcan > img {
     height: 100%;
     user-select: none;
     -moz-user-select: none;

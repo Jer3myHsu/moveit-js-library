@@ -122,7 +122,11 @@
                 heldElement.style.top = elementY + "px";
             };
             const item = getItemMouseOver(e);
-            if (item && typeof hoverId !== "number" && MoveIt.canDragWith(heldId, MoveIt.getIdByItem(item))) {
+            const itemId = MoveIt.getIdByItem(item);
+            if (item && hoverId !== itemId) {
+                restoreItem("hover");
+            }
+            if (item && typeof hoverId !== "number" && MoveIt.canDragWith(heldId, itemId)) {
                 hoverId = MoveIt.getIdByItem(item);
                 switchItem(item, "hover");
             } else if (!item && typeof hoverId === "number") {
@@ -189,11 +193,15 @@
                             const releasedItemId = releaseItem();
                             restoreItem("held");
                             const releasedItem = MoveIt.getItemById(releasedItemId);
+                            const releasedItemProp = MoveIt.getItemProperty(releasedItemId);
                             const itemOver = getItemMouseOver(e);
                             const itemOverId = MoveIt.getIdByItem(itemOver)
-                            typeof MoveIt.onRelease === "function" && MoveIt.onRelease(releasedItem, itemOver);
+                            releasedItemProp.onRelease ? releasedItemProp.onRelease(releasedItem, itemOver) :
+                                (MoveIt.onRelease && MoveIt.onRelease(releasedItem, itemOver));
                             if (releasedItem && itemOver && releasedItemId !== itemOverId && MoveIt.canDragWith(releasedItemId, itemOverId)) {
-                                typeof MoveIt.onSwap === "function" && MoveIt.onSwap(releasedItem, itemOver);
+                                typeof MoveIt.onSwap === "function" &&
+                                releasedItemProp.onSwap ? releasedItemProp.onSwap(releasedItem, itemOver) :
+                                    (MoveIt.onSwap && MoveIt.onSwap(releasedItem, itemOver));
                                 MoveIt.swap(releasedItem, itemOver);
                             }
                             restoreItem("hover");//Must restore at the end since losing parent will cause swap issue
@@ -338,9 +346,9 @@
             typeof MoveIt.onRelease !== "function" && (MoveIt.onRelease = undefined);
             typeof MoveIt.onSwap !== "function" && (MoveIt.onSwap = undefined);
             if (Array.isArray(MoveIt.itemProperty)) {
-                MoveIt.itemProperty = MoveIt.itemProperty.filter(itemProp => {
-                    typeof itemProp.id === "number" && itemProp.id < size;
-                });
+                MoveIt.itemProperty = MoveIt.itemProperty.filter(itemProp => 
+                    typeof itemProp.id === "number" && itemProp.id < size
+                );
                 MoveIt.itemProperty = MoveIt.itemProperty.filter((itemProp, index) => MoveIt.itemProperty.indexOf(itemProp) === index);
                 MoveIt.itemProperty.forEach(itemProp => {
                     typeof itemProp.holdCenter !== "boolean" && (itemProp.holdCursor = undefined);
@@ -354,11 +362,12 @@
                     typeof itemProp.onRelease !== "function" && (itemProp.onRelease = undefined);
                     typeof itemProp.onSwap !== "function" && (itemProp.onSwap = undefined);
                     if (Array.isArray(itemProp.swapGroup)) {
-                        itemProp.swapGroup = itemProp.swapGroup.filter(itemId => {
-                            typeof itemId === "number" && itemId < size && itemId !== itemProp.id;
-                        });
+                        itemProp.swapGroup.push(itemProp.id)
+                        itemProp.swapGroup = itemProp.swapGroup.filter(itemId => 
+                            typeof itemId === "number" && itemId < size
+                        );
                         itemProp.swapGroup = itemProp.swapGroup.filter((itemId, index) => itemProp.swapGroup.indexOf(itemId) === index);
-                        if (itemProp.swapGroup.length < size - 1) {
+                        if (itemProp.swapGroup.length < size) {
                             itemProp.swapGroup.sort((a, b) => a - b);
                         } else {
                             itemProp.swapGroup = undefined;

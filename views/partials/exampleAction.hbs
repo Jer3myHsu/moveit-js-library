@@ -4,10 +4,10 @@
 </p>
 <div class="box">
     <div moveit-item class="ball">
-        <img src="res/soccer.png">
+        <img src="image/example/soccer.png">
     </div>
     <div moveit-item class="ball">
-        <img src="res/basketball.png">
+        <img src="image/example/basketball.png">
     </div>
     <div class="action">
         <p>Nothing is happening</p>
@@ -39,4 +39,37 @@ MoveIt.onSwap = (releasedItem, itemOver) => {
     const overText = MoveIt.getIdByItem(itemOver) === 0 ? "Soccer ball" : "Basketball";
     textField.innerText += "\n" + releasedText + " swapped with " + overText;
 }</code></pre>
+</div>
+<h2>Deleting Items</h2>
+<p>
+    Using actions functions, you can create a method of deleting items.
+</p>
+<div class="box">
+    <div moveit-item class="trashcan">
+        <img src="image/example/recycle.png">
+    </div>
+    <div moveit-item class="ball">
+        <img src="image/example/soccer.png">
+    </div>
+    <div moveit-item class="ball">
+        <img src="image/example/basketball.png">
+    </div>
+    <div moveit-item class="ball">
+        <img src="image/example/soccer.png">
+    </div>
+    <div moveit-item class="ball">
+        <img src="image/example/basketball.png">
+    </div>
+</div>
+<div class="code">
+    <h3>JavaScript</h3>
+    <pre><code>//Make sure nothing drags with the trashcan
+MoveIt.removeDraggableWith([0], undefined);
+MoveIt.setDraggableWith([1,2,3,4],[1,2,3,4]);
+
+MoveIt.onRelease = (releasedItem, itemOver) => {
+    if (MoveIt.getIdByItem(itemOver) === 0) {
+        releasedItem.parentElement.removeChild(releasedItem);
+    }
+};</code></pre>
 </div>
