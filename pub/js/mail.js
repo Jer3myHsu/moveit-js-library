@@ -31,15 +31,15 @@ MoveIt.itemProperty.forEach(itemProp => {
         };
         itemProp.onRelease = (releasedItem, itemOver) => {
             if (MoveIt.getIdByItem(itemOver) === MoveIt.itemProperty.length - 1) {
-                MoveIt.getItems().slice(-1)[0].style.bottom = "-50px";
                 releasedItem.parentElement.removeChild(releasedItem);
             }
+            MoveIt.getItems().slice(-1)[0].style.bottom = "-50px";
         };
     }
 });
 
 MoveIt.elementOriginStyle = "filter: blur(2px); opacity: 0.3;";
 
-MoveIt.dragWeight = 3;
+MoveIt.dragWeight = 2;
 MoveIt.holdCursor = "grabbing";
 MoveIt.holdCenter = true;

@@ -165,7 +165,7 @@
         onRelease: undefined,
         onSwap: undefined,
         initializeMoveIt: (id) => {
-            MoveIt.id = id;
+            MoveIt.id = document.querySelector("#" + id) ? id : undefined;
             MoveIt.itemProperty = initialItemProperty(MoveIt.getItems());
             initializeId(MoveIt.getItems());
             window.addEventListener("mousedown", function(e)  {
@@ -199,7 +199,6 @@
                             releasedItemProp.onRelease ? releasedItemProp.onRelease(releasedItem, itemOver) :
                                 (MoveIt.onRelease && MoveIt.onRelease(releasedItem, itemOver));
                             if (releasedItem && itemOver && releasedItemId !== itemOverId && MoveIt.canDragWith(releasedItemId, itemOverId)) {
-                                typeof MoveIt.onSwap === "function" &&
                                 releasedItemProp.onSwap ? releasedItemProp.onSwap(releasedItem, itemOver) :
                                     (MoveIt.onSwap && MoveIt.onSwap(releasedItem, itemOver));
                                 MoveIt.swap(releasedItem, itemOver);

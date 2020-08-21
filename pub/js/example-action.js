@@ -16,7 +16,7 @@ MoveIt.itemProperty.forEach(itemProp => {
 
         itemProp.onRelease = (releasedItem, itemOver) => {
             const releasedText = MoveIt.getIdByItem(releasedItem) === 0 ? "Soccer ball" : "Basketball";
-            if (typeof itemOver !== "undefined") {
+            if (typeof itemOver !== "undefined" && MoveIt.getIdByItem(itemOver) < 2) {
                 const overText = MoveIt.getIdByItem(itemOver) === 0 ? "Soccer ball" : "Basketball";
                 textField.innerText = releasedText + " was released over " + overText;
             } else {

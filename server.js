@@ -50,7 +50,7 @@ app.get("/examples", (req, res) => {
 });
 
 app.get("/examples/mail", (req, res) => {
-	res.render("mail", {title: "MoveIt | mail Page Example"});
+	res.render("mail", {title: "MoveIt | Mail Page Example"});
 });
 
 app.get("/download", (req, res) => {
@@ -78,16 +78,17 @@ app.get("/documentation", (req, res) => {
 	}
 });
 
-app.get('*', function(req, res){
+const port = process.env.PORT || 5000;
+
+app.use(function(req, res) {
 	res.status(404).render(layoutDir + "/notFound", {
 		layout: "index",
 		title: "MoveIt | Page Not Found",
-		css: "notFound.css",
-		header: true
+		header: true,
+		port: port === 5000 ? "http://localhost:5000" : port
 	});
-  });
+});
 
-const port = process.env.PORT || 5000;
 app.listen(port, () => {
 	log(`Listening on port ${port}...`);
 });  // localhost development port 5000  (http://localhost:5000)
