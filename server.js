@@ -84,7 +84,7 @@ app.use(function(req, res) {
 		layout: "index",
 		title: "MoveIt | Page Not Found",
 		header: true,
-		port: req.protocol + "://" + req.get('host')
+		url: req.protocol + "://" + req.get('host')
 	});
 });
 
