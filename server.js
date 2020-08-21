@@ -78,16 +78,16 @@ app.get("/documentation", (req, res) => {
 	}
 });
 
-const port = process.env.PORT || 5000;
-
 app.use(function(req, res) {
 	res.status(404).render(layoutDir + "/notFound", {
 		layout: "index",
 		title: "MoveIt | Page Not Found",
 		header: true,
-		port: port === 5000 ? "http://localhost:5000" : port
+		port: req.protocol + "://" + req.get('host')
 	});
 });
+
+const port = process.env.PORT || 5000;
 
 app.listen(port, () => {
 	log(`Listening on port ${port}...`);
