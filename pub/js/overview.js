@@ -1,6 +1,6 @@
 "user strict";
 
-MoveIt.initializeMoveIt("moveIt");
+MoveIt.initializeMoveIt();
 
 MoveIt.itemProperty.forEach(itemProp => {
     const item = MoveIt.getItemById(itemProp.id);
