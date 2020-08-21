@@ -50,8 +50,8 @@ app.get("/examples", (req, res) => {
 	}
 });
 
-app.get("/examples/mail", (req, res) => {
-	res.render("mail", {title: "MoveIt | Mail Page Example"});
+app.get("/examples/email", (req, res) => {
+	res.render("email", {title: "MoveIt | Email Page Example"});
 });
 
 app.get("/download", (req, res) => {
