@@ -13,7 +13,9 @@
 </p>
 <div class="code">
     <h3>JavaScript</h3>
-    <pre><code>// Make sure cursor is at the center of the held item
+    <pre><code>MoveIt.initializeMoveIt();
+
+// Make sure cursor is at the center of the held item
 MoveIt.holdCenter = true;
 
 
@@ -67,7 +69,9 @@ MoveIt.elementOrigin = origin;</code></pre>
 <div class="row">
     <div class="code">
         <h3>JavaScript</h3>
-        <pre><code>MoveIt.itemProperty.forEach(itemProp => {
+        <pre><code>MoveIt.initializeMoveIt();
+            
+MoveIt.itemProperty.forEach(itemProp => {
     // id of soccerball item
     if (itemProp.id === 3) {
         itemProp.elementHeldStyle = "animation: spin 0.5s infinite linear;";

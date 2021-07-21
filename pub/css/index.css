@@ -54,7 +54,7 @@ h1, h2, h3 {
     text-decoration: none;
     color: black;
     padding: 10px 20px;
-    transition: all ease-in-out 0.2s;
+    transition: color ease-in-out 0.2s;
 }
 
 #menu > a:hover {
@@ -68,11 +68,10 @@ h1, h2, h3 {
 
 .navigation {
     position: absolute;
-    top: 60px;
-    left: 2%;
+    top: 5em;
+    left: 2em;
     display: flex;
     flex-direction: column;
-    min-width: 172px;
     border-radius: 14px;
     background-color: #F0F0F0;
 }
@@ -82,7 +81,7 @@ h1, h2, h3 {
     color: black;
     margin: 10px 20px;
     text-align: start;
-    transition: all ease-in-out 0.2s;
+    transition: color ease-in-out 0.2s;
 }
 
 .navigation > a:hover {

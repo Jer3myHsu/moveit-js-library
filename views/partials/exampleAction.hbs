@@ -15,7 +15,9 @@
 </div>
 <div class="code">
     <h3>JavaScript</h3>
-    <pre><code>// Element to update
+    <pre><code>MoveIt.initializeMoveIt();
+
+// Element to update
 const textField = document.querySelector(...);
 
 // Functions
@@ -63,7 +65,9 @@ MoveIt.onSwap = (releasedItem, itemOver) => {
 </div>
 <div class="code">
     <h3>JavaScript</h3>
-    <pre><code>//Make sure nothing drags with the trashcan
+    <pre><code>MoveIt.initializeMoveIt();
+
+//Make sure nothing drags with the trashcan
 MoveIt.removeDraggableWith([0], undefined);
 MoveIt.setDraggableWith([1,2,3,4],[1,2,3,4]);
 

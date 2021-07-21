@@ -55,7 +55,7 @@ app.get("/examples/email", (req, res) => {
 });
 
 app.get("/download", (req, res) => {
-	res.redirect("https://github.com/csc309-summer-2020/js-library-hsuchi");
+	res.redirect("https://github.com/Jer3myHsu/moveit-js-library/releases");
 });
 
 app.get("/documentation", (req, res) => {
