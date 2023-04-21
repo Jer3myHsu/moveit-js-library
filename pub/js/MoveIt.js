@@ -18,7 +18,7 @@
     }
     function initialItemProperty(items) {
         const itemProperty = [];
-        items.map((item, i) => itemProperty.push({
+        items.forEach((item, i) => itemProperty.push({
             id: i,
             holdCenter: undefined,
             elementHeld: undefined,
@@ -62,10 +62,11 @@
         }
     }
     function getItemMouseOver(e) {
-        for (let i = 0; i < e.path.length - 2; i++) {
-            const attributes = e.path[i].getAttributeNames();
-            if (attributes && attributes.includes("moveit-item") && MoveIt.getIdByItem(e.path[i]) !== heldId) {
-                return e.path[i];
+        for (let i = 0; i < e.composedPath().length - 2; i++) {
+            const element = e.composedPath()[i];
+            const attributes = element.getAttributeNames();
+            if (attributes && attributes.includes("moveit-item") && MoveIt.getIdByItem(element) !== heldId) {
+                return element;
             }
         }
     }
@@ -208,7 +209,6 @@
                     }
                 }
             });
-            
         },
         getItems: () => {
             function getItemsHelper(element,  result) {
@@ -240,9 +240,9 @@
         addDraggableWith: (srcIdArr, destIdArr) => {
             const allIdArr = [];
             if (srcIdArr === undefined) {
-                MoveIt.itemProperty.map(prop => allIdArr.push(prop.id));
+                MoveIt.itemProperty.forEach(prop => allIdArr.push(prop.id));
             }
-            (srcIdArr || allIdArr).map(srcId => {
+            (srcIdArr || allIdArr).forEach(srcId => {
                 // If given id is greater than the maximum possible id, then skip it
                 if (MoveIt.itemProperty.length <= srcId) {
                     return;
@@ -250,7 +250,7 @@
                 if(destIdArr === undefined) {
                     MoveIt.getItemProperty(srcId).swapGroup = undefined;
                 } else if (MoveIt.getItemProperty(srcId).swapGroup) {
-                    destIdArr.map(destId => {
+                    destIdArr.forEach(destId => {
                         if (!MoveIt.getItemProperty(srcId).swapGroup.includes(destId) &&
                             destId < MoveIt.itemProperty.length && destId !== srcId) {
                             MoveIt.getItemProperty(srcId).swapGroup.push(destId);
@@ -263,7 +263,7 @@
         setDraggableWith: (srcIdArr, destIdArr) => {
             const allIdArr = [];
             if (srcIdArr === undefined) {
-                MoveIt.itemProperty.map(prop => allIdArr.push(prop.id));
+                MoveIt.itemProperty.forEach(prop => allIdArr.push(prop.id));
             }
             (srcIdArr || allIdArr).forEach(srcId => {
                 if (MoveIt.itemProperty.length <= srcId) {
@@ -280,9 +280,9 @@
         removeDraggableWith: (srcIdArr, destIdArr) => {
             const allIdArr = [];
             if (srcIdArr === undefined) {
-                MoveIt.itemProperty.map(prop => allIdArr.push(prop.id));
+                MoveIt.itemProperty.forEach(prop => allIdArr.push(prop.id));
             }
-            (srcIdArr || allIdArr).map(srcId => {
+            (srcIdArr || allIdArr).forEach(srcId => {
                 if (MoveIt.itemProperty.length <= srcId) {
                     return;
                 }
@@ -291,10 +291,10 @@
                     return;
                 } else if (!MoveIt.itemProperty[srcId]) {
                     const allIdArr = [];
-                    MoveIt.itemProperty.map(prop => allIdArr.push(prop.id));
+                    MoveIt.itemProperty.forEach(prop => allIdArr.push(prop.id));
                     MoveIt.getItemProperty(srcId).swapGroup = allIdArr;
                 }
-                destIdArr.map(destId => {
+                destIdArr.forEach(destId => {
                     const index = MoveIt.getItemProperty(srcId).swapGroup.indexOf(destId);
                     if (index >= 0) {
                         MoveIt.getItemProperty(srcId).swapGroup.splice(index, 1);
